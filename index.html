@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FitPulse - Egzersiz ve Antrenman Koçu</title>
+  <title>Evde Antrenman ve Egzersiz Koçu</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -21,20 +21,20 @@
 </head>
 <body class="bg-slate-100 text-slate-800 dark:bg-slate-900 dark:text-slate-100 min-h-screen transition-colors duration-200">
 
-  <!-- Navbar -->
-  <header class="border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+  <!-- Üst Bar -->
+  <header class="border-b border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur sticky top-0 z-50">
     <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
       <div class="flex items-center gap-2">
-        <i class="fa-solid fa-dumbbell text-brand text-2xl"></i>
-        <span class="font-bold text-lg tracking-tight">FitPulse</span>
+        <i class="fa-solid fa-heart-pulse text-brand text-2xl"></i>
+        <span class="font-bold text-lg tracking-tight">HomeFit Koç</span>
       </div>
-      <div class="flex items-center gap-4">
-        <nav class="flex gap-2">
-          <button onclick="switchTab('today')" id="tab-today" class="px-3 py-1.5 rounded-lg text-sm font-medium bg-brand text-white">Bugün</button>
-          <button onclick="switchTab('program')" id="tab-program" class="px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-800">Program Yap</button>
-          <button onclick="switchTab('library')" id="tab-library" class="px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-800">Kütüphane</button>
+      <div class="flex items-center gap-3">
+        <nav class="flex gap-1 sm:gap-2">
+          <button onclick="switchTab('today')" id="tab-today" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium bg-brand text-white">Bugün</button>
+          <button onclick="switchTab('program')" id="tab-program" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-800">Program Yap</button>
+          <button onclick="switchTab('library')" id="tab-library" class="px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-800">Kütüphane</button>
         </nav>
-        <button onclick="toggleTheme()" class="p-2 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-200 dark:hover:bg-slate-800">
+        <button onclick="toggleTheme()" class="p-2 rounded-lg border border-slate-200 dark:border-slate-800 hover:bg-slate-200 dark:hover:bg-slate-800" title="Temayı Değiştir">
           <i id="theme-icon" class="fa-solid fa-sun text-amber-400"></i>
         </button>
       </div>
@@ -43,14 +43,14 @@
 
   <main class="max-w-6xl mx-auto p-4 md:p-6">
     
-    <!-- SEKME 1: BUGÜNÜN ANTRENMANI -->
+    <!-- 1. SEKME: BUGÜNÜN LİSTESİ -->
     <section id="view-today" class="space-y-6">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 class="text-2xl font-bold">Bugünün Antrenmanı</h1>
           <p id="current-day-label" class="text-slate-500 dark:text-slate-400 text-sm capitalize"></p>
         </div>
-        <div class="flex items-center gap-2 bg-white dark:bg-slate-800 p-1.5 rounded-xl border border-slate-200 dark:border-slate-700">
+        <div class="flex items-center gap-1.5 bg-white dark:bg-slate-800 p-1.5 rounded-xl border border-slate-200 dark:border-slate-700 overflow-x-auto max-w-full">
           <button onclick="setPreviewDay(1)" class="day-btn px-2.5 py-1 rounded text-xs">Pzt</button>
           <button onclick="setPreviewDay(2)" class="day-btn px-2.5 py-1 rounded text-xs">Sal</button>
           <button onclick="setPreviewDay(3)" class="day-btn px-2.5 py-1 rounded text-xs">Çar</button>
@@ -66,53 +66,56 @@
       </div>
     </section>
 
-    <!-- SEKME 2: PROGRAM OLUŞTURUCU -->
+    <!-- 2. SEKME: PROGRAM OLUŞTURUCU -->
     <section id="view-program" class="space-y-6 hidden">
       <div>
-        <h1 class="text-2xl font-bold">Haftalık Rutinini Planla</h1>
-        <p class="text-slate-500 dark:text-slate-400 text-sm">Her gün için kütüphaneden hareket seç veya tüm günleri tek tıkla eşitle.</p>
+        <h1 class="text-2xl font-bold">Haftalık Rutinini Oluştur</h1>
+        <p class="text-slate-500 dark:text-slate-400 text-sm">Günü seç, evde yapacağın hareketleri ekle. İstersen tüm haftayı tek şablonla eşitle.</p>
       </div>
 
       <div class="flex flex-wrap gap-2 border-b border-slate-200 dark:border-slate-800 pb-3">
-        <button onclick="selectRoutineDay('all')" class="routine-tab px-3 py-1.5 rounded-lg text-sm font-semibold bg-brand text-white">Her Gün Aynı</button>
-        <button onclick="selectRoutineDay('1')" class="routine-tab px-3 py-1.5 rounded-lg text-sm bg-slate-200 dark:bg-slate-800">Pazartesi</button>
-        <button onclick="selectRoutineDay('2')" class="routine-tab px-3 py-1.5 rounded-lg text-sm bg-slate-200 dark:bg-slate-800">Salı</button>
-        <button onclick="selectRoutineDay('3')" class="routine-tab px-3 py-1.5 rounded-lg text-sm bg-slate-200 dark:bg-slate-800">Çarşamba</button>
-        <button onclick="selectRoutineDay('4')" class="routine-tab px-3 py-1.5 rounded-lg text-sm bg-slate-200 dark:bg-slate-800">Perşembe</button>
-        <button onclick="selectRoutineDay('5')" class="routine-tab px-3 py-1.5 rounded-lg text-sm bg-slate-200 dark:bg-slate-800">Cuma</button>
-        <button onclick="selectRoutineDay('6')" class="routine-tab px-3 py-1.5 rounded-lg text-sm bg-slate-200 dark:bg-slate-800">Cumartesi</button>
-        <button onclick="selectRoutineDay('0')" class="routine-tab px-3 py-1.5 rounded-lg text-sm bg-slate-200 dark:bg-slate-800">Pazar</button>
+        <button onclick="selectRoutineDay('all')" class="routine-tab px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-brand text-white">Her Gün Aynı</button>
+        <button onclick="selectRoutineDay('1')" class="routine-tab px-3 py-1.5 rounded-lg text-xs sm:text-sm bg-slate-200 dark:bg-slate-800">Pazartesi</button>
+        <button onclick="selectRoutineDay('2')" class="routine-tab px-3 py-1.5 rounded-lg text-xs sm:text-sm bg-slate-200 dark:bg-slate-800">Salı</button>
+        <button onclick="selectRoutineDay('3')" class="routine-tab px-3 py-1.5 rounded-lg text-xs sm:text-sm bg-slate-200 dark:bg-slate-800">Çarşamba</button>
+        <button onclick="selectRoutineDay('4')" class="routine-tab px-3 py-1.5 rounded-lg text-xs sm:text-sm bg-slate-200 dark:bg-slate-800">Perşembe</button>
+        <button onclick="selectRoutineDay('5')" class="routine-tab px-3 py-1.5 rounded-lg text-xs sm:text-sm bg-slate-200 dark:bg-slate-800">Cuma</button>
+        <button onclick="selectRoutineDay('6')" class="routine-tab px-3 py-1.5 rounded-lg text-xs sm:text-sm bg-slate-200 dark:bg-slate-800">Cumartesi</button>
+        <button onclick="selectRoutineDay('0')" class="routine-tab px-3 py-1.5 rounded-lg text-xs sm:text-sm bg-slate-200 dark:bg-slate-800">Pazar</button>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div class="lg:col-span-2 space-y-4">
-          <h2 class="font-semibold text-lg flex items-center justify-between">
-            <span>Kütüphaneden Egzersiz Ekle</span>
-            <span id="target-day-name" class="text-xs text-brand font-medium">Hedef: Her Gün</span>
-          </h2>
-          <div id="builder-library-list" class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[600px] overflow-y-auto pr-2">
-            <!-- JS ile hareketler listelenecek -->
+          <div class="flex items-center justify-between">
+            <h2 class="font-semibold text-lg">Ev Egzersizleri Havuzu</h2>
+            <span id="target-day-name" class="text-xs text-brand font-medium">Hedef: Her Gün Aynı</span>
+          </div>
+          <div id="builder-library-list" class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[600px] overflow-y-auto pr-1">
+            <!-- JS ile dolacak -->
           </div>
         </div>
 
-        <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 h-fit space-y-4">
-          <h2 class="font-semibold text-lg">Seçili Egzersizler</h2>
-          <div id="selected-routine-list" class="space-y-2 min-h-[150px]">
-            <!-- Seçilenler buraya gelecek -->
+        <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 h-fit space-y-4 shadow-sm">
+          <h2 class="font-semibold text-lg flex items-center justify-between">
+            <span>Seçili Hareketler</span>
+            <span id="selected-count" class="text-xs font-normal text-slate-400">0 hareket</span>
+          </h2>
+          <div id="selected-routine-list" class="space-y-2 min-h-[160px]">
+            <!-- JS ile seçilenler listelenecek -->
           </div>
         </div>
       </div>
     </section>
 
-    <!-- SEKME 3: EGZERSİZ KÜTÜPHANESİ & GİFLER -->
+    <!-- 3. SEKME: DETAYLI KÜTÜPHANE VE FORM REHBERİ -->
     <section id="view-library" class="space-y-6 hidden">
       <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
         <div>
-          <h1 class="text-2xl font-bold">Egzersiz Kütüphanesi</h1>
-          <p class="text-slate-500 dark:text-slate-400 text-sm">Form rehberleri ve animasyonlar.</p>
+          <h1 class="text-2xl font-bold">Ev Egzersizi Rehberi</h1>
+          <p class="text-slate-500 dark:text-slate-400 text-sm">Doğru duruş rehberleri, form şablonları ve animasyonlar.</p>
         </div>
         <div class="flex flex-wrap gap-2" id="filter-buttons">
-          <button onclick="filterCategory('hepsi')" class="filter-btn active px-3 py-1 rounded-full text-xs font-semibold bg-brand text-white">Tümü</button>
+          <button onclick="filterCategory('hepsi')" class="filter-btn px-3 py-1 rounded-full text-xs font-semibold bg-brand text-white">Tümü</button>
           <button onclick="filterCategory('sırt')" class="filter-btn px-3 py-1 rounded-full text-xs bg-slate-200 dark:bg-slate-800">Sırt</button>
           <button onclick="filterCategory('kol')" class="filter-btn px-3 py-1 rounded-full text-xs bg-slate-200 dark:bg-slate-800">Kol</button>
           <button onclick="filterCategory('bacak')" class="filter-btn px-3 py-1 rounded-full text-xs bg-slate-200 dark:bg-slate-800">Bacak</button>
@@ -120,42 +123,192 @@
         </div>
       </div>
 
-      <div id="full-library-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <!-- JS ile dolacak -->
+      <div id="full-library-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- JS ile detaylı kartlar basılacak -->
       </div>
     </section>
 
   </main>
 
   <script>
-    // --- VERİ HAVUZU ---
+    // EV ORTAMI İÇİN UYGUN EGZERSİZLER & GİF ANİMASYONLARI
     const EXERCISES = [
-      { id: 'ex1', name: 'Lat Pulldown', category: 'sırt', target: 'Kanat & Üst Sırt', gif: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=500&auto=format&fit=crop&q=60' },
-      { id: 'ex2', name: 'Barbell Row', category: 'sırt', target: 'Orta Sırt', gif: 'https://images.unsplash.com/photo-1605296867304-46d5465a13f1?w=500&auto=format&fit=crop&q=60' },
-      { id: 'ex3', name: 'Bicep Dumbbell Curl', category: 'kol', target: 'Biceps', gif: 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=500&auto=format&fit=crop&q=60' },
-      { id: 'ex4', name: 'Triceps Rope Pushdown', category: 'kol', target: 'Triceps', gif: 'https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=500&auto=format&fit=crop&q=60' },
-      { id: 'ex5', name: 'Wrist Curl (Ön Kol)', category: 'kol', target: 'Ön Kol (Forearms)', gif: 'https://images.unsplash.com/photo-1590487988256-9ed24133863e?w=500&auto=format&fit=crop&q=60' },
-      { id: 'ex6', name: 'Goblet Squat', category: 'bacak', target: 'Quadriceps', gif: 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=500&auto=format&fit=crop&q=60' },
-      { id: 'ex7', name: 'Romanian Deadlift (RDL)', category: 'bacak', target: 'Hamstring & Glute', gif: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=500&auto=format&fit=crop&q=60' },
-      { id: 'ex8', name: 'Barbell Hip Thrust', category: 'kalça', target: 'Gluteus Maximus', gif: 'https://images.unsplash.com/photo-1566241142559-40e1dab266c6?w=500&auto=format&fit=crop&q=60' },
-      { id: 'ex9', name: 'Glute Cable Kickback', category: 'kalça', target: 'Gluteus Medius', gif: 'https://images.unsplash.com/photo-1538805060514-97d9cc17730c?w=500&auto=format&fit=crop&q=60' },
+      // KALÇA
+      {
+        id: 'ex_glute_bridge',
+        name: 'Glute Bridge (Köprü)',
+        category: 'kalça',
+        target: 'Gluteus Maximus, Arka Bacak',
+        equipment: 'Mat / Vücut Ağırlığı',
+        gif: 'https://images.squarespace-cdn.com/content/v1/54fbb67ce4b025381a1a9e3e/1614078491871-331E1P102717J8L1K78Q/glute+bridge.gif',
+        steps: [
+          'Sırt üstü uzan, dizlerini kır ve ayak tabanlarını yere bas.',
+          'Topuklarından güç alarak kalçanı yukarı kaldır.',
+          'Zirvede kalçanı 1 saniye sık, beli aşırı bükmeden kontrollü in.'
+        ],
+        tip: 'Omurganı değil, sadece kalçanı sıkarak yukarı it.'
+      },
+      {
+        id: 'ex_donkey_kicks',
+        name: 'Donkey Kicks',
+        category: 'kalça',
+        target: 'Üst Kalça (Gluteus Medius/Maximus)',
+        equipment: 'Mat (Opsiyonel Direnç Bandı)',
+        gif: 'https://images.squarespace-cdn.com/content/v1/54fbb67ce4b025381a1a9e3e/1614078502324-F42UGB3J7Q0TUS1A1867/donkey+kick.gif',
+        steps: [
+          'Emekleme pozisyonuna geç (eller omuz altında, dizler kalça altında).',
+          'Diz açısını 90 derecede tutarak bir bacağını tavana doğru it.',
+          'Kalçayı sıkıştırarak tepeye ulaş ve yavaşça başlangıca dön.'
+        ],
+        tip: 'Beli çukurlaştırmamak için karın kaslarını sıkı tut.'
+      },
+      {
+        id: 'ex_fire_hydrant',
+        name: 'Fire Hydrant',
+        category: 'kalça',
+        target: 'Yan Kalça (Gluteus Medius)',
+        equipment: 'Ekipmansız',
+        gif: 'https://images.squarespace-cdn.com/content/v1/54fbb67ce4b025381a1a9e3e/1614078507851-QW92R41M3P5G4V9W7912/fire+hydrant.gif',
+        steps: [
+          'Dört ayak pozisyonunda dur.',
+          'Dizin bükülü halde bacağını yana doğru aç.',
+          'Gövdeni yana yatırmadan kalçanın dış kısmını sıkarak indir.'
+        ],
+        tip: 'Hareketi acele etmeden, tepe noktada yarım saniye duraklayarak yap.'
+      },
+
+      // BACAK
+      {
+        id: 'ex_bodyweight_squat',
+        name: 'Bodyweight Squat',
+        category: 'bacak',
+        target: 'Ön Bacak (Quadriceps), Kalça',
+        equipment: 'Vücut Ağırlığı',
+        gif: 'https://images.squarespace-cdn.com/content/v1/54fbb67ce4b025381a1a9e3e/1614078550118-Y97X5G7QYWR9WJ6YI6W4/bodyweight+squat.gif',
+        steps: [
+          'Ayaklarını omuz genişliğinde aç, ayak uçları hafif dışa baksın.',
+          'Arkanda bir sandalye varmış gibi kalçayı geriye vererek çök.',
+          'Göğsü dik tut, dizlerin parmak ucunu aşırı geçmemesine dikkat et.'
+        ],
+        tip: 'Ağırlığı topuklarına ver, dizlerinin içeri kapanmasına izin verme.'
+      },
+      {
+        id: 'ex_reverse_lunge',
+        name: 'Geriye Lunge (Reverse Lunge)',
+        category: 'bacak',
+        target: 'Ön & Arka Bacak, Denge',
+        equipment: 'Vücut Ağırlığı / Çift Şişe',
+        gif: 'https://images.squarespace-cdn.com/content/v1/54fbb67ce4b025381a1a9e3e/1614078561234-O6S06C61V84R5298H3C8/reverse+lunge.gif',
+        steps: [
+          'Dik dur, bir adım geriye atarak iki dizini de yaklaşık 90 derece bük.',
+          'Öndeki ayağın topuğundan kuvvet alarak başlangıç pozisyonuna dön.',
+          'Diğer bacakla tekrarla.'
+        ],
+        tip: 'İleri lunge yerine geriye lunge yapmak diz kapaklarına binen baskıyı azaltır.'
+      },
+      {
+        id: 'ex_wall_sit',
+        name: 'Wall Sit (Duvarda Oturma)',
+        category: 'bacak',
+        target: 'İzometrik Quadriceps Dayanıklılığı',
+        equipment: 'Düz bir duvar',
+        gif: 'https://images.squarespace-cdn.com/content/v1/54fbb67ce4b025381a1a9e3e/1614078572111-9QZ314O3N5B7Q8U4J3R2/wall+sit.gif',
+        steps: [
+          'Sırtını duvara yasla ve bacakların 90 derece dik olana kadar kay.',
+          'Dizlerin ayak bileklerinin tam üstünde olmalı.',
+          'Belirlenen süre boyunca (30-45 sn) pozisyonu koru.'
+        ],
+        tip: 'Ellerini dizlerine koyup güç alma, yanlarda serbest bırak.'
+      },
+
+      // SIRT
+      {
+        id: 'ex_superman',
+        name: 'Superman (Sırt & Bel)',
+        category: 'sırt',
+        target: 'Bel, Alt/Üst Sırt, Duruş Düzeltme',
+        equipment: 'Mat',
+        gif: 'https://images.squarespace-cdn.com/content/v1/54fbb67ce4b025381a1a9e3e/1614078583421-P0O9I8U7Y6T5R4E3W2Q1/superman.gif',
+        steps: [
+          'Yüzüstü uzan, kollarını ileriye doğru uzat.',
+          'Kollarını, göğsünü ve bacaklarını aynı anda yerden 10-15 cm kaldır.',
+          'Sırt ve bel kaslarını sıkarak 1-2 saniye bekle, sonra yavaşça in.'
+        ],
+        tip: 'Boynunu çok geriye bükme, yere bakarak omurganı düz tut.'
+      },
+      {
+        id: 'ex_doorframe_row',
+        name: 'Kapı Pervazı Çekişi (Doorframe Row)',
+        category: 'sırt',
+        target: 'Kanat Kasları (Latissimus), Kürek Kemikleri',
+        equipment: 'Kapı kasası veya havlu',
+        gif: 'https://images.squarespace-cdn.com/content/v1/54fbb67ce4b025381a1a9e3e/1614078594982-Z1X2C3V4B5N6M7L8K9J0/bodyweight+row.gif',
+        steps: [
+          'Kapı pervazını iki elinle tut, ayaklarını pervazın tabanına yaklaştır.',
+          'Vücudunu geriye doğru eğerek kollarını düzleştir.',
+          'Göğsünü kapıya doğru çekerken kürek kemiklerini birbirine yaklaştır.'
+        ],
+        tip: 'Çekerken kollarından değil, sırt kaslarını sıkarak çekmeye odaklan.'
+      },
+
+      // KOL (Biceps, Triceps, Ön Kol)
+      {
+        id: 'ex_chair_dips',
+        name: 'Sandalye/Koltuk Dips (Triceps)',
+        category: 'kol',
+        target: 'Arka Kol (Triceps)',
+        equipment: 'Sağlam bir sandalye veya koltuk kenarı',
+        gif: 'https://images.squarespace-cdn.com/content/v1/54fbb67ce4b025381a1a9e3e/1614078605555-M9N8B7V6C5X4Z3A2S1D0/bench+dips.gif',
+        steps: [
+          'Ellerini sandalyenin kenarına koy, kalçanı sandalyenin hemen önüne al.',
+          'Dirseklerini 90 derece bükene kadar gövdeni aşağı indir.',
+          'Avuç içlerinden iterek kollarını düzleştir ve başlangıç konumuna dön.'
+        ],
+        tip: 'Omuzlarını kulaklarına doğru çekme, göğsünü açık tut.'
+      },
+      {
+        id: 'ex_bottle_curls',
+        name: 'Biceps Curl (Şişe/Dambıl)',
+        category: 'kol',
+        target: 'Ön Kol (Biceps)',
+        equipment: 'Dambıl veya 1.5L Su Şişeleri',
+        gif: 'https://images.squarespace-cdn.com/content/v1/54fbb67ce4b025381a1a9e3e/1614078616123-Q1W2E3R4T5Y6U7I8O9P0/bicep+curl.gif',
+        steps: [
+          'Dirseklerini gövdenin yanına sabitle.',
+          'Ağırlığı omuz hizasına doğru kontrollüce bükerek kaldır.',
+          'Tepe noktada pazunu sık, yavaşça indir.'
+        ],
+        tip: 'Ağırlığı kaldırırken gövdeni öne arkaya sallamadan sadece ön kolu hareket ettir.'
+      },
+      {
+        id: 'ex_wrist_curl',
+        name: 'Diz Üstü Wrist Curl (Bilek/Ön Kol)',
+        category: 'kol',
+        target: 'Ön Kol Fleksörleri (Bilek Güçlendirme)',
+        equipment: 'Hafif Dambıl veya Su Şişesi',
+        gif: 'https://images.squarespace-cdn.com/content/v1/54fbb67ce4b025381a1a9e3e/1614078627789-A1S2D3F4G5H6J7K8L9Z0/wrist+curl.gif',
+        steps: [
+          'Ön kolunu dizine veya masaya daya, el bileğin kenardan boşlukta kalsın.',
+          'Avucun yukarı bakacak şekilde sadece bileğini yukarı bük.',
+          'Ağırlığı kontrollüce parmak uçlarına kadar indirip tekrar bük.'
+        ],
+        tip: 'Kolu sabit tutup yalnızca bilek eklemini çalıştır.'
+      }
     ];
 
     const DAYS = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
 
-    // LocalStorage Yönetimi
-    let routines = JSON.parse(localStorage.getItem('fit_routines')) || {
-      'all': ['ex1', 'ex3', 'ex6'],
+    let routines = JSON.parse(localStorage.getItem('fit_routines_v2')) || {
+      'all': ['ex_glute_bridge', 'ex_donkey_kicks', 'ex_bodyweight_squat', 'ex_chair_dips'],
       '1': [], '2': [], '3': [], '4': [], '5': [], '6': [], '0': []
     };
     let activeDay = new Date().getDay();
     let currentBuilderDay = 'all';
 
     function saveRoutines() {
-      localStorage.setItem('fit_routines', JSON.stringify(routines));
+      localStorage.setItem('fit_routines_v2', JSON.stringify(routines));
     }
 
-    // --- TEMA YÖNETİMİ ---
     function initTheme() {
       if (localStorage.theme === 'light') {
         document.documentElement.classList.remove('dark');
@@ -174,21 +327,19 @@
         : 'fa-solid fa-moon text-slate-600';
     }
 
-    // --- SEKME GEÇİŞLERİ ---
     function switchTab(tab) {
       ['today', 'program', 'library'].forEach(t => {
         document.getElementById(`view-${t}`).classList.add('hidden');
-        document.getElementById(`tab-${t}`).className = 'px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-800';
+        document.getElementById(`tab-${t}`).className = 'px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium hover:bg-slate-200 dark:hover:bg-slate-800';
       });
       document.getElementById(`view-${tab}`).classList.remove('hidden');
-      document.getElementById(`tab-${tab}`).className = 'px-3 py-1.5 rounded-lg text-sm font-medium bg-brand text-white';
+      document.getElementById(`tab-${tab}`).className = 'px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium bg-brand text-white';
 
       if(tab === 'today') renderToday();
       if(tab === 'program') renderBuilder();
       if(tab === 'library') renderLibrary('hepsi');
     }
 
-    // --- BUGÜNÜN LİSTESİ ---
     function setPreviewDay(day) {
       activeDay = day;
       renderToday();
@@ -196,9 +347,8 @@
 
     function renderToday() {
       const label = document.getElementById('current-day-label');
-      label.textContent = `${DAYS[activeDay]} için hedeflenen program`;
+      label.textContent = `${DAYS[activeDay]} Hedefleri (Ev Programı)`;
 
-      // Gün butonlarını renklendir
       document.querySelectorAll('.day-btn').forEach((btn, idx) => {
         const d = [1,2,3,4,5,6,0][idx];
         if (d === activeDay) {
@@ -208,13 +358,12 @@
         }
       });
 
-      // Eğer o güne özel egzersiz yoksa 'all' (varsayılan) listesini al
       const list = (routines[activeDay] && routines[activeDay].length > 0) ? routines[activeDay] : routines['all'];
       const container = document.getElementById('today-exercises');
       container.innerHTML = '';
 
       if (list.length === 0) {
-        container.innerHTML = `<div class="col-span-2 text-center py-12 text-slate-400">Bu gün için planlanan hareket yok. Program Yap sekmesinden ekleyebilirsin.</div>`;
+        container.innerHTML = `<div class="col-span-2 text-center py-12 text-slate-400">Bu gün için seçili hareket yok. "Program Yap" sekmesinden ekleyebilirsin.</div>`;
         return;
       }
 
@@ -222,15 +371,16 @@
         const ex = EXERCISES.find(e => e.id === exId);
         if (!ex) return;
         const card = document.createElement('div');
-        card.className = 'bg-white dark:bg-slate-800 rounded-2xl p-4 border border-slate-200 dark:border-slate-700 flex gap-4 items-center';
+        card.className = 'bg-white dark:bg-slate-800 rounded-2xl p-4 border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row gap-4 items-center shadow-sm';
         card.innerHTML = `
-          <img src="${ex.gif}" alt="${ex.name}" class="w-20 h-20 rounded-xl object-cover border border-slate-100 dark:border-slate-700" />
-          <div class="flex-1">
-            <span class="text-xs uppercase font-semibold text-brand tracking-wider">${ex.category}</span>
-            <h3 class="font-bold text-base">${ex.name}</h3>
+          <img src="${ex.gif}" alt="${ex.name}" class="w-full sm:w-28 h-28 rounded-xl object-cover bg-slate-200 dark:bg-slate-700" loading="lazy" />
+          <div class="flex-1 text-center sm:text-left">
+            <span class="text-[11px] uppercase font-bold text-brand tracking-wider">${ex.category} • ${ex.equipment}</span>
+            <h3 class="font-bold text-base mt-0.5">${ex.name}</h3>
             <p class="text-xs text-slate-400 mt-1">${ex.target}</p>
+            <p class="text-[11px] text-amber-500/90 dark:text-amber-400 mt-1.5"><i class="fa-solid fa-lightbulb mr-1"></i>${ex.tip}</p>
           </div>
-          <button onclick="this.classList.toggle('bg-emerald-500'); this.classList.toggle('text-white');" class="w-10 h-10 rounded-full border border-slate-300 dark:border-slate-600 flex items-center justify-center transition">
+          <button onclick="this.classList.toggle('bg-emerald-500'); this.classList.toggle('text-white');" class="w-10 h-10 rounded-full border border-slate-300 dark:border-slate-600 flex items-center justify-center transition shrink-0">
             <i class="fa-solid fa-check"></i>
           </button>
         `;
@@ -238,50 +388,57 @@
       });
     }
 
-    // --- PROGRAM OLUŞTURUCU ---
     function selectRoutineDay(day) {
       currentBuilderDay = day;
       document.querySelectorAll('.routine-tab').forEach(btn => {
-        btn.className = 'routine-tab px-3 py-1.5 rounded-lg text-sm bg-slate-200 dark:bg-slate-800';
+        btn.className = 'routine-tab px-3 py-1.5 rounded-lg text-xs sm:text-sm bg-slate-200 dark:bg-slate-800';
       });
-      event.target.className = 'routine-tab px-3 py-1.5 rounded-lg text-sm font-semibold bg-brand text-white';
+      event.target.className = 'routine-tab px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-brand text-white';
       
-      const dayName = day === 'all' ? 'Her Gün (Genel Şablon)' : DAYS[day];
+      const dayName = day === 'all' ? 'Her Gün (Varsayılan)' : DAYS[day];
       document.getElementById('target-day-name').textContent = `Hedef: ${dayName}`;
       renderBuilder();
     }
 
     function renderBuilder() {
-      // Egzersiz Ekleme Havuzu
       const libContainer = document.getElementById('builder-library-list');
       libContainer.innerHTML = '';
       EXERCISES.forEach(ex => {
         const isAdded = routines[currentBuilderDay].includes(ex.id);
         const card = document.createElement('div');
-        card.className = 'p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 flex items-center justify-between';
+        card.className = 'p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/60 flex items-center justify-between gap-2';
         card.innerHTML = `
-          <div>
-            <p class="text-xs text-brand font-medium uppercase">${ex.category}</p>
-            <h4 class="text-sm font-bold">${ex.name}</h4>
+          <div class="flex items-center gap-3">
+            <img src="${ex.gif}" class="w-12 h-12 rounded-lg object-cover bg-slate-100 dark:bg-slate-700" />
+            <div>
+              <p class="text-[11px] text-brand font-semibold uppercase">${ex.category}</p>
+              <h4 class="text-sm font-bold leading-snug">${ex.name}</h4>
+            </div>
           </div>
-          <button onclick="toggleExercise('${ex.id}')" class="px-2.5 py-1 rounded-lg text-xs font-semibold ${isAdded ? 'bg-rose-500/10 text-rose-500' : 'bg-brand/10 text-brand'}">
+          <button onclick="toggleExercise('${ex.id}')" class="px-2.5 py-1 rounded-lg text-xs font-semibold shrink-0 transition ${isAdded ? 'bg-rose-500/10 text-rose-500 border border-rose-500/20' : 'bg-brand text-white'}">
             ${isAdded ? 'Kaldır' : '+ Ekle'}
           </button>
         `;
         libContainer.appendChild(card);
       });
 
-      // Seçili Egzersizler Paneli
       const selectedContainer = document.getElementById('selected-routine-list');
       selectedContainer.innerHTML = '';
-      routines[currentBuilderDay].forEach(id => {
+      const curList = routines[currentBuilderDay] || [];
+      document.getElementById('selected-count').textContent = `${curList.length} hareket`;
+
+      if (curList.length === 0) {
+        selectedContainer.innerHTML = '<p class="text-xs text-slate-400 py-6 text-center">Henüz bu güne hareket eklemedin.</p>';
+      }
+
+      curList.forEach(id => {
         const ex = EXERCISES.find(e => e.id === id);
         if (!ex) return;
         const tag = document.createElement('div');
-        tag.className = 'flex items-center justify-between bg-slate-100 dark:bg-slate-700/50 p-2.5 rounded-lg text-sm';
+        tag.className = 'flex items-center justify-between bg-slate-100 dark:bg-slate-700/50 p-2.5 rounded-xl text-sm';
         tag.innerHTML = `
-          <span class="font-medium">${ex.name}</span>
-          <button onclick="toggleExercise('${ex.id}')" class="text-slate-400 hover:text-rose-500"><i class="fa-solid fa-xmark"></i></button>
+          <span class="font-medium text-xs sm:text-sm">${ex.name}</span>
+          <button onclick="toggleExercise('${ex.id}')" class="text-slate-400 hover:text-rose-500 p-1"><i class="fa-solid fa-xmark"></i></button>
         `;
         selectedContainer.appendChild(tag);
       });
@@ -298,7 +455,6 @@
       renderBuilder();
     }
 
-    // --- KÜTÜPHANE GÖRÜNÜMÜ ---
     function filterCategory(cat) {
       document.querySelectorAll('.filter-btn').forEach(btn => {
         btn.className = 'filter-btn px-3 py-1 rounded-full text-xs bg-slate-200 dark:bg-slate-800';
@@ -315,13 +471,32 @@
       filtered.forEach(ex => {
         const card = document.createElement('div');
         card.className = 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden shadow-sm flex flex-col';
+        
+        const stepsHtml = ex.steps.map((s, idx) => `<li class="text-xs text-slate-500 dark:text-slate-400 mb-1"><strong class="text-slate-700 dark:text-slate-200">${idx+1}.</strong> ${s}</li>`).join('');
+
         card.innerHTML = `
-          <img src="${ex.gif}" alt="${ex.name}" class="h-44 w-full object-cover" />
-          <div class="p-4 flex-1 flex flex-col justify-between">
+          <div class="relative bg-slate-950 flex items-center justify-center">
+            <img src="${ex.gif}" alt="${ex.name}" class="h-56 w-full object-contain" loading="lazy" />
+            <span class="absolute top-3 left-3 bg-brand text-white text-[10px] font-bold uppercase px-2 py-0.5 rounded-md shadow">${ex.category}</span>
+          </div>
+          <div class="p-5 flex-1 flex flex-col justify-between space-y-3">
             <div>
-              <span class="text-xs uppercase font-bold text-brand">${ex.category}</span>
-              <h3 class="font-bold text-lg mt-0.5">${ex.name}</h3>
-              <p class="text-xs text-slate-400 mt-1">${ex.target}</p>
+              <h3 class="font-bold text-lg">${ex.name}</h3>
+              <p class="text-xs text-slate-400 font-medium mt-0.5"><i class="fa-solid fa-bullseye mr-1 text-brand"></i>${ex.target}</p>
+              <p class="text-xs text-slate-400 font-medium mt-0.5"><i class="fa-solid fa-couch mr-1 text-brand"></i>${ex.equipment}</p>
+              
+              <div class="mt-3 pt-3 border-t border-slate-100 dark:border-slate-700">
+                <span class="text-xs font-semibold block mb-1.5">Nasıl Yapılır? (Form Şablonu)</span>
+                <ul class="list-none pl-0">
+                  ${stepsHtml}
+                </ul>
+              </div>
+            </div>
+
+            <div class="bg-amber-50 dark:bg-amber-950/30 border border-amber-200/50 dark:border-amber-800/40 p-2.5 rounded-xl">
+              <p class="text-[11px] text-amber-700 dark:text-amber-300 leading-relaxed">
+                <strong>Püf Noktası:</strong> ${ex.tip}
+              </p>
             </div>
           </div>
         `;
@@ -329,7 +504,6 @@
       });
     }
 
-    // Başlatma
     initTheme();
     renderToday();
   </script>
