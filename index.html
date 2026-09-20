@@ -21,6 +21,20 @@
   <style>
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    
+    /* İki kareli döngüsel form animasyonu (GIF alternatifi) */
+    @keyframes frameLoop {
+      0%, 45% { opacity: 1; }
+      50%, 95% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+    @keyframes frameLoopAlt {
+      0%, 45% { opacity: 0; }
+      50%, 95% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+    .anim-f1 { animation: frameLoop 1.8s infinite ease-in-out; }
+    .anim-f2 { animation: frameLoopAlt 1.8s infinite ease-in-out; }
   </style>
 </head>
 <body class="bg-slate-100 text-slate-800 dark:bg-slate-900 dark:text-slate-100 min-h-screen transition-colors duration-200">
@@ -47,7 +61,7 @@
 
   <main class="max-w-6xl mx-auto p-4 md:p-6">
     
-    <!-- 1. SEKME: BUGÜNÜN ANTRENMANI -->
+    <!-- 1. SEKME: BUGÜNÜN LİSTESİ -->
     <section id="view-today" class="space-y-6">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
@@ -74,7 +88,7 @@
     <section id="view-program" class="space-y-6 hidden">
       <div>
         <h1 class="text-2xl font-bold">Programını Özelleştir</h1>
-        <p class="text-slate-500 dark:text-slate-400 text-sm">Günü seç, 80 ev egzersizinden dilediklerini ekle. Boş bırakılan günler varsayılan şablondan çalışır.</p>
+        <p class="text-slate-500 dark:text-slate-400 text-sm">Günü seç, 80 ev egzersizinden dilediklerini ekle. Boş günler varsayılan şablondan çalışır.</p>
       </div>
 
       <div class="flex flex-wrap gap-2 border-b border-slate-200 dark:border-slate-800 pb-3">
@@ -93,15 +107,15 @@
           <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
             <h2 class="font-semibold text-base sm:text-lg">Kütüphaneden Seç</h2>
             <div class="flex gap-1 overflow-x-auto max-w-full pb-1">
-              <button onclick="filterBuilderCategory('all')" class="b-cat-btn px-2 py-0.5 rounded text-xs bg-brand text-white font-medium">Tümü</button>
-              <button onclick="filterBuilderCategory('kalça')" class="b-cat-btn px-2 py-0.5 rounded text-xs bg-slate-200 dark:bg-slate-800">Kalça</button>
-              <button onclick="filterBuilderCategory('bacak')" class="b-cat-btn px-2 py-0.5 rounded text-xs bg-slate-200 dark:bg-slate-800">Bacak</button>
-              <button onclick="filterBuilderCategory('kol')" class="b-cat-btn px-2 py-0.5 rounded text-xs bg-slate-200 dark:bg-slate-800">Kol</button>
-              <button onclick="filterBuilderCategory('sırt')" class="b-cat-btn px-2 py-0.5 rounded text-xs bg-slate-200 dark:bg-slate-800">Sırt</button>
+              <button onclick="filterBuilderCategory('all')" class="b-cat-btn px-2.5 py-0.5 rounded text-xs bg-brand text-white font-medium">Tümü</button>
+              <button onclick="filterBuilderCategory('kalça')" class="b-cat-btn px-2.5 py-0.5 rounded text-xs bg-slate-200 dark:bg-slate-800">Kalça</button>
+              <button onclick="filterBuilderCategory('bacak')" class="b-cat-btn px-2.5 py-0.5 rounded text-xs bg-slate-200 dark:bg-slate-800">Bacak</button>
+              <button onclick="filterBuilderCategory('kol')" class="b-cat-btn px-2.5 py-0.5 rounded text-xs bg-slate-200 dark:bg-slate-800">Kol</button>
+              <button onclick="filterBuilderCategory('sırt')" class="b-cat-btn px-2.5 py-0.5 rounded text-xs bg-slate-200 dark:bg-slate-800">Sırt</button>
             </div>
           </div>
           <div id="builder-library-list" class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[580px] overflow-y-auto pr-1">
-            <!-- JS ile hareketler gelecek -->
+            <!-- JS ile hareketler dolacak -->
           </div>
         </div>
 
@@ -117,12 +131,12 @@
       </div>
     </section>
 
-    <!-- 3. SEKME: DETAYLI KÜTÜPHANE VE FORM ŞABLONU -->
+    <!-- 3. SEKME: DETAYLI KÜTÜPHANE VE FORM ŞABLONLARI -->
     <section id="view-library" class="space-y-6 hidden">
       <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
         <div>
           <h1 class="text-2xl font-bold">Kapsamlı Ev Kütüphanesi</h1>
-          <p class="text-slate-500 dark:text-slate-400 text-sm">Toplam 80 egzersiz: Form şablonları, yapılış adımları ve ipuçları.</p>
+          <p class="text-slate-500 dark:text-slate-400 text-sm">80 egzersiz: 2 aşamalı döngüsel form gösterimleri, adımlar ve püf noktaları.</p>
         </div>
         <div class="flex flex-wrap gap-1.5" id="filter-buttons">
           <button onclick="filterLibraryCategory('hepsi')" class="filter-btn px-3 py-1 rounded-full text-xs font-semibold bg-brand text-white">Tümü (80)</button>
@@ -141,501 +155,167 @@
   </main>
 
   <script>
-    // 80 ADET DETAYLI EV EGZERSİZİ (HER BÖLÜMDEN TAM 20 HAREKET)
+    // FORM ŞABLONU İÇİN İKİ AŞAMALI ANİMASYONLU VEKTÖRLER
+    function getExerciseAnimationSvg(type, isSmall = false) {
+      const h = isSmall ? 'h-14 w-14' : 'h-48 w-full';
+      const strokeW = isSmall ? '5' : '4';
+      const headR = isSmall ? '7' : '9';
+      
+      let f1 = '', f2 = '';
+
+      if (type === 'bridge') {
+        // Pozisyon 1: Yerde yatış | Pozisyon 2: Kalça tepeye kalkmış
+        f1 = `<path d="M 20 85 L 45 85 L 60 70 L 80 85" fill="none" stroke="#6366f1" stroke-width="${strokeW}" stroke-linecap="round"/>
+              <circle cx="18" cy="80" r="${headR}" fill="#818cf8"/>`;
+        f2 = `<path d="M 20 85 L 50 60 L 68 60 L 80 85" fill="none" stroke="#22c55e" stroke-width="${strokeW}" stroke-linecap="round"/>
+              <circle cx="18" cy="80" r="${headR}" fill="#4ade80"/>`;
+      } else if (type === 'quadruped') {
+        // Dört ayak: Başlangıç | Bacak havada
+        f1 = `<path d="M 25 50 L 45 50 L 45 85 M 25 50 L 25 85 M 45 50 L 70 85" fill="none" stroke="#6366f1" stroke-width="${strokeW}" stroke-linecap="round"/>
+              <circle cx="16" cy="45" r="${headR}" fill="#818cf8"/>`;
+        f2 = `<path d="M 25 50 L 45 50 L 45 85 M 25 50 L 25 85 M 45 50 L 80 45" fill="none" stroke="#22c55e" stroke-width="${strokeW}" stroke-linecap="round"/>
+              <circle cx="16" cy="45" r="${headR}" fill="#4ade80"/>`;
+      } else if (type === 'squat') {
+        // Ayakta dik | Derin squat
+        f1 = `<path d="M 50 35 L 50 65 L 40 95 M 50 65 L 60 95 M 50 45 L 35 55 M 50 45 L 65 55" fill="none" stroke="#6366f1" stroke-width="${strokeW}" stroke-linecap="round"/>
+              <circle cx="50" cy="22" r="${headR}" fill="#818cf8"/>`;
+        f2 = `<path d="M 40 55 L 40 70 L 60 70 L 55 95 M 40 70 L 30 95 M 40 60 L 65 60" fill="none" stroke="#22c55e" stroke-width="${strokeW}" stroke-linecap="round"/>
+              <circle cx="38" cy="42" r="${headR}" fill="#4ade80"/>`;
+      } else if (type === 'lunge') {
+        // Ayakta | Lunge çöküşü
+        f1 = `<path d="M 50 35 L 50 65 L 45 95 M 50 65 L 55 95" fill="none" stroke="#6366f1" stroke-width="${strokeW}" stroke-linecap="round"/>
+              <circle cx="50" cy="22" r="${headR}" fill="#818cf8"/>`;
+        f2 = `<path d="M 45 50 L 45 70 L 65 70 L 65 95 M 45 70 L 30 75 L 28 95" fill="none" stroke="#22c55e" stroke-width="${strokeW}" stroke-linecap="round"/>
+              <circle cx="45" cy="35" r="${headR}" fill="#4ade80"/>`;
+      } else if (type === 'curl') {
+        // Kol aşağıda | Kol bükülü yukarıda
+        f1 = `<path d="M 50 35 L 50 70 L 40 95 M 50 70 L 60 95 M 50 45 L 65 65 L 65 85" fill="none" stroke="#6366f1" stroke-width="${strokeW}" stroke-linecap="round"/>
+              <circle cx="50" cy="22" r="${headR}" fill="#818cf8"/>`;
+        f2 = `<path d="M 50 35 L 50 70 L 40 95 M 50 70 L 60 95 M 50 45 L 65 65 L 60 48" fill="none" stroke="#22c55e" stroke-width="${strokeW}" stroke-linecap="round"/>
+              <circle cx="50" cy="22" r="${headR}" fill="#4ade80"/>`;
+      } else if (type === 'dips') {
+        // Dips yukarıda | Dips aşağıda
+        f1 = `<path d="M 65 45 L 65 90 M 45 55 L 45 75 L 35 90 M 45 58 L 65 58 L 65 70" fill="none" stroke="#6366f1" stroke-width="${strokeW}" stroke-linecap="round"/>
+              <circle cx="45" cy="42" r="${headR}" fill="#818cf8"/>`;
+        f2 = `<path d="M 65 45 L 65 90 M 45 68 L 45 82 L 35 90 M 45 68 L 55 60 L 65 70" fill="none" stroke="#22c55e" stroke-width="${strokeW}" stroke-linecap="round"/>
+              <circle cx="45" cy="54" r="${headR}" fill="#4ade80"/>`;
+      } else if (type === 'superman') {
+        // Yerde düz | Kollar & bacaklar havada
+        f1 = `<path d="M 15 85 L 85 85" fill="none" stroke="#6366f1" stroke-width="${strokeW}" stroke-linecap="round"/>
+              <circle cx="20" cy="80" r="${headR}" fill="#818cf8"/>`;
+        f2 = `<path d="M 15 70 L 35 85 L 65 85 L 85 70" fill="none" stroke="#22c55e" stroke-width="${strokeW}" stroke-linecap="round"/>
+              <circle cx="15" cy="62" r="${headR}" fill="#4ade80"/>`;
+      } else {
+        // Genel / Row
+        f1 = `<path d="M 45 40 L 45 75 L 35 95 M 45 75 L 55 95 M 45 50 L 70 65" fill="none" stroke="#6366f1" stroke-width="${strokeW}" stroke-linecap="round"/>
+              <circle cx="45" cy="26" r="${headR}" fill="#818cf8"/>`;
+        f2 = `<path d="M 45 40 L 45 75 L 35 95 M 45 75 L 55 95 M 45 50 L 60 52 L 40 50" fill="none" stroke="#22c55e" stroke-width="${strokeW}" stroke-linecap="round"/>
+              <circle cx="45" cy="26" r="${headR}" fill="#4ade80"/>`;
+      }
+
+      return `
+        <div class="relative ${h} bg-slate-950 rounded-xl overflow-hidden flex items-center justify-center p-2">
+          <svg viewBox="0 0 100 100" class="absolute w-full h-full anim-f1">${f1}</svg>
+          <svg viewBox="0 0 100 100" class="absolute w-full h-full anim-f2">${f2}</svg>
+          <span class="absolute bottom-1 right-1.5 text-[9px] text-slate-500 font-mono tracking-tighter opacity-70">1⟳2</span>
+        </div>
+      `;
+    }
+
+    // 80 ADET DETAYLI EV EGZERSİZİ LİSTESİ
     const EXERCISES = [
       // ==================== KALÇA (20 HAREKET) ====================
-      {
-        id: 'kl_01', name: 'Glute Bridge (Klasik Köprü)', category: 'kalça', target: 'Büyük Kalça (Maximus)', equipment: 'Mat',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Glute_Bridge/0.jpg',
-        steps: ['Sırtüstü uzanıp dizleri bükün, ayak tabanları yere tam bassın.', 'Topuklardan güç alarak kalçayı yukarı itin.', 'Tepe noktada kalçayı 2 saniye sıkıp yavaşça bırakın.'],
-        tip: 'Beli çukurlaştırmayın, hareketi omurganızla değil kalçanızla yapın.'
-      },
-      {
-        id: 'kl_02', name: 'Tek Bacak Glute Bridge', category: 'kalça', target: 'Kalça İzolasyonu & Denge', equipment: 'Mat',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Single_Leg_Glute_Bridge/0.jpg',
-        steps: ['Klasik köprüye geçin, bir bacağınızı havaya dik uzatın.', 'Yerdeki tek topukla kalçayı havaya kaldırın.', 'Kalça leğen kemiğinin yana yatmamasına özen gösterin.'],
-        tip: 'Her iki bacak için eşit tekrar uygulayın.'
-      },
-      {
-        id: 'kl_03', name: 'Donkey Kicks (Eşek Tekmesi)', category: 'kalça', target: 'Üst Kalça Şekillendirme', equipment: 'Mat',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Glute_Kickback/0.jpg',
-        steps: ['Dört ayak pozisyonu alın.', 'Diz açısını 90 derecede sabitleyip tabanınızı tavana doğru itin.', 'Kalçanızı sıkarak yavaşça indirin.'],
-        tip: 'Beli aşağı sarkıtmayın, karın kaslarını gergin tutun.'
-      },
-      {
-        id: 'kl_04', name: 'Fire Hydrant (Yana Açış)', category: 'kalça', target: 'Yan Kalça (Gluteus Medius)', equipment: 'Mat',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Fire_Hydrant/0.jpg',
-        steps: ['Dört ayak pozisyonunda durun.', 'Dizin bükülü açısını bozmadan bacağı yana doğru açın.', 'Gövdeyi yana kaydırmadan kontrollüce geri indirin.'],
-        tip: 'Hareketi savurarak değil, yan kalça kasını hissederek yapın.'
-      },
-      {
-        id: 'kl_05', name: 'Frog Pump (Kurbağa Köprüsü)', category: 'kalça', target: 'Derin Kalça Aktivasyonu', equipment: 'Mat',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Glute_Bridge/1.jpg',
-        steps: ['Sırtüstü uzanıp ayak tabanlarınızı birbirine yapıştırın (dizler yanlara açık).', 'Ayak tabanlarını birbirine bastırarak kalçayı kaldırın.', 'En tepede kalçayı sonuna kadar sıkın.'],
-        tip: 'Ayakları kasıklara çok fazla yaklaştırmayın.'
-      },
-      {
-        id: 'kl_06', name: 'Clamshell (Deniz Kabuğu)', category: 'kalça', target: 'Dış Kalça & Kalça Stabilizasyonu', equipment: 'Mat',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Side_Bridge/0.jpg',
-        steps: ['Yan uzanın, dizlerinizi 45 derece bükün.', 'Topukları birbirine temas ettirerek üstteki dizi yukarı açın.', 'Pelvisi geriye devirmeden tepeye ulaşıp indirin.'],
-        tip: 'Bant kullanarak direnci ve yanmayı katlayabilirsiniz.'
-      },
-      {
-        id: 'kl_07', name: 'Koltukta Hip Thrust', category: 'kalça', target: 'Maksimum Kalça Yükü', equipment: 'Koltuk / Sandalye',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Hip_Thrust/0.jpg',
-        steps: ['Kürek kemiklerinizi koltuğun kenarına dayayın.', 'Dizler 90 derece bükülü kalacak şekilde kalçayı zemine yaklaştırıp kaldırın.', 'Gözler karşıya baksın, tepe noktada kalça kilitlensin.'],
-        tip: 'Kucağınıza ağır bir kitap veya su şişesi koyarak direnci artırın.'
-      },
-      {
-        id: 'kl_08', name: 'Ayakta Geriye Tekme (Glute Kickback)', category: 'kalça', target: 'Gluteus Maximus', equipment: 'Sandalye Desteği',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Standing_Hip_Extension/0.jpg',
-        steps: ['Bir sandalyeye tutunup gövdenizi hafifçe öne eğin.', 'Bacağınızı düz şekilde arkaya ve yukarı doğru itin.', 'Kalçayı sıkıp 1 saniye bekledikten sonra indirin.'],
-        tip: 'Beli bükmeden sadece kalça kasınızın çekişiyle uzanın.'
-      },
-      {
-        id: 'kl_09', name: 'Yana Yatarak Düz Bacak Kaldırma', category: 'kalça', target: 'Yan Kalça & Trokanter Çevresi', equipment: 'Mat',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Side_Leg_Raises/0.jpg',
-        steps: ['Yan yatıp alttaki kolunuzu başınızın altına alın.', 'Üstteki bacağı dümdüz uzatıp yukarı kaldırın.', 'Ayak parmağınızın hafifçe yere bakması yan kalçayı izole eder.'],
-        tip: 'Aşağı inerken bacağı tamamen yere bırakıp dinlenmeyin.'
-      },
-      {
-        id: 'kl_10', name: 'Curtsy Lunge (Kraliyet Adımı)', category: 'kalça', target: 'Kalça Çevresi & Basen', equipment: 'Vücut Ağırlığı',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Bodyweight_Drop_Lunge/0.jpg',
-        steps: ['Ayakta dik durun.', 'Bir bacağınızı diğerinin arkasından çapraza doğru atarak dizinizi kırın.', 'Öndeki ayağın topuğundan güç alarak kalkın.'],
-        tip: 'Öndeki dizin içe dönmemesine özen gösterin.'
-      },
-      {
-        id: 'kl_11', name: 'Sumo Squat Pulse (Kısa Vuruşlar)', category: 'kalça', target: 'İç Bacak ve Alt Kalça', equipment: 'Vücut Ağırlığı',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Sumo_Squat/0.jpg',
-        steps: ['Ayakları genişçe açın, ayak parmaklarını dışa çevirin.', 'Aşağı çökün ve en dip noktada 5 cm yukarı-aşağı yaylanın.', 'Tamamen ayağa kalkmadan süreyi tamamlayın.'],
-        tip: 'Dizlerinizi dışa doğru itin, sırtı dik tutun.'
-      },
-      {
-        id: 'kl_12', name: 'Köprüde Diz Açma-Kapama (Abduction)', category: 'kalça', target: 'Kalça Dışı & Sabitleyiciler', equipment: 'Mat / Opsiyonel Bant',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Glute_Bridge/0.jpg',
-        steps: ['Kalçanızı kaldırıp köprü pozisyonunda sabit kalın.', 'Kalçayı hiç düşürmeden dizlerinizi iki yana açıp kapatın.', '30 saniye boyunca köprüyü bozmayın.'],
-        tip: 'Topukların dış kenarlarına basmak verimi iki katına çıkarır.'
-      },
-      {
-        id: 'kl_13', name: 'Ayakta Yana Bacak Açma', category: 'kalça', target: 'Yan Kalça Sıkılaşması', equipment: 'Sandalye Desteği',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Side_Leg_Raises/0.jpg',
-        steps: ['Sandalyenin arkasına geçip dik durun.', 'Bir bacağı yana doğru dümdüz açın.', 'Gövdenizi karşı tarafa eğmemeye çalışın.'],
-        tip: 'Hareketi yavaş yapmak kas liflerini maksimum uyarır.'
-      },
-      {
-        id: 'kl_14', name: 'Yüzüstü Bacak Sıkıştırma (Prone Leg Raise)', category: 'kalça', target: 'Arka Kalça & Bel Güçlendirme', equipment: 'Mat',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Reverse_Hyperextension/0.jpg',
-        steps: ['Yüzüstü uzanın, ellerinizi alnınızın altına koyun.', 'Dizleri bükmeden bacakları kalçayı sıkarak 15 cm yukarı kaldırın.', '1 saniye havada bekletip indirin.'],
-        tip: 'Ayak bileklerini hafifçe dışa doğru çevirin.'
-      },
-      {
-        id: 'kl_15', name: 'Bulgarian Split Squat (Kalça Odaklı)', category: 'kalça', target: 'Tek Taraflı Kalça Büyümesi', equipment: 'Sandalye / Kanepe',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Single_Leg_Squat/0.jpg',
-        steps: ['Bir ayağınızı arkanızdaki sandalyeye koyun.', 'Gövdenizi hafifçe öne yatırarak derin bir lunge yapın.', 'Öndeki ayağın topuğundan iterek yükselin.'],
-        tip: 'Gövdeyi dik tutmak bacağa, öne yatırmak ise tamamen kalçaya yük bindirir.'
-      },
-      {
-        id: 'kl_16', name: 'Rainbows (Kalçada Gökkuşağı)', category: 'kalça', target: 'Tüm Kalça Çevresi', equipment: 'Mat',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Glute_Kickback/0.jpg',
-        steps: ['Dört ayak üstünde bir bacağınızı geriye uzatın.', 'Bacağınızı soldan sağa havada geniş bir yay çizerek gezdirin.', 'Her iki uç noktada parmak ucunuzla yere hafifçe dokunun.'],
-        tip: 'Hareketi belinizi sallamadan gerçekleştirin.'
-      },
-      {
-        id: 'kl_17', name: 'Duvarda Kalça İtme (Wall Press Hip)', category: 'kalça', target: 'İzometrik Kalça Kuvveti', equipment: 'Duvar',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Glute_Bridge/0.jpg',
-        steps: ['Yan durup duvara yakın olan dizinizi kırarak duvara yaslayın.', 'Dizinizle duvara doğru olanca kuvvetinizle bastırın.', 'Yerdeki ayakta kalçanın yandığını hissedin.'],
-        tip: 'Gövdeyi dimdik tutarak 25 saniye itin.'
-      },
-      {
-        id: 'kl_18', name: 'Yengeç Yürüyüşü (Crab Walk)', category: 'kalça', target: 'Gluteus Medius & Stabilite', equipment: 'Bant / Ekipmansız',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Bodyweight_Squat/0.jpg',
-        steps: ['Yarım squat pozisyonuna çökün.', 'Pozisyonu hiç bozmadan sağa 5 adım, ardından sola 5 adım yürüyün.', 'Dizlerin içeri düşmesine izin vermeyin.'],
-        tip: 'Adım atarken ayak tabanlarınızı sürümeyin.'
-      },
-      {
-        id: 'kl_19', name: 'Good Morning (Kalça İtme)', category: 'kalça', target: 'Kalça ve Hamstring Geçişi', equipment: 'Süpürge Sapı / Şişe',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Good_Morning/0.jpg',
-        steps: ['Ellerinizi başınızın arkasına koyun, dizleri çok hafif kırın.', 'Sırtı düz tutarak kalçayı arkadaki duvara değdirecekmiş gibi geriye itin.', 'Kalçanızı sıkarak başlangıç konumuna dönün.'],
-        tip: 'Dizleri bükerek çökmeyin, sadece kalçayı geriye itin.'
-      },
-      {
-        id: 'kl_20', name: 'Step-Up (Sandalyeye Adımlama)', category: 'kalça', target: 'Kalça Şekillendirme', equipment: 'Sağlam Sandalye',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Step_Up/0.jpg',
-        steps: ['Sandalyenin önüne geçip bir ayağınızı sandalyeye tam basın.', 'Alttaki ayaktan zıplamadan, sadece üstteki bacağın gücüyle kendinizi yukarı itin.', 'İnerken çok kontrollü ve yavaş inin.'],
-        tip: 'Üstteki ayağın topuğuna odaklanın.'
-      },
+      { id: 'kl_01', name: 'Glute Bridge (Klasik Köprü)', category: 'kalça', target: 'Büyük Kalça (Maximus)', equipment: 'Mat', animType: 'bridge', steps: ['Sırtüstü uzanıp dizleri bükün.', 'Topuklardan güç alarak kalçayı yukarı itin.', 'Tepe noktada kalçayı 2 saniye sıkıp bırakın.'], tip: 'Beli bükmeyin, yükü kalçaya verin.' },
+      { id: 'kl_02', name: 'Tek Bacak Glute Bridge', category: 'kalça', target: 'Kalça İzolasyonu', equipment: 'Mat', animType: 'bridge', steps: ['Bir bacağı tavana dik uzatın.', 'Yerdeki tek topukla kalçayı kaldırın.', 'Pelvisi dengede tutun.'], tip: 'İki taraf için de eşit tekrar yapın.' },
+      { id: 'kl_03', name: 'Donkey Kicks (Eşek Tekmesi)', category: 'kalça', target: 'Üst Kalça Şekillendirme', equipment: 'Mat', animType: 'quadruped', steps: ['Dört ayak üstünde durun.', 'Diz 90 dereceyken tabanınızı tavana itin.', 'Kalçayı sıkıp indirin.'], tip: 'Beli çukurlaştırmayın.' },
+      { id: 'kl_04', name: 'Fire Hydrant (Yana Açış)', category: 'kalça', target: 'Yan Kalça (Medius)', equipment: 'Mat', animType: 'quadruped', steps: ['Dört ayak pozisyonu alın.', 'Dizin açısını bozmadan bacağı yana açın.', 'Kontrollü indirin.'], tip: 'Gövdeyi yana devirmeyin.' },
+      { id: 'kl_05', name: 'Frog Pump (Kurbağa Köprüsü)', category: 'kalça', target: 'Derin Kalça Aktivasyonu', equipment: 'Mat', animType: 'bridge', steps: ['Ayak tabanlarınızı birbirine yapıştırın.', 'Tabanları bastırarak kalçayı kaldırın.', 'Zirvede kalçayı sıkın.'], tip: 'Dizleri iki yana açık tutun.' },
+      { id: 'kl_06', name: 'Clamshell (Deniz Kabuğu)', category: 'kalça', target: 'Dış Kalça & Stabilite', equipment: 'Mat', animType: 'quadruped', steps: ['Yan uzanıp dizleri 45 derece bükün.', 'Topukları temas ettirip üstteki dizi açın.', 'Geri indirin.'], tip: 'Pelvisi geriye devirmeyin.' },
+      { id: 'kl_07', name: 'Koltukta Hip Thrust', category: 'kalça', target: 'Maksimum Kalça Yükü', equipment: 'Koltuk / Sandalye', animType: 'dips', steps: ['Kürek kemiklerini koltuğa yaslayın.', 'Kalçayı indirip yukarı itin.', 'Tepe noktada kilitlenin.'], tip: 'Gözler karşıya baksın.' },
+      { id: 'kl_08', name: 'Ayakta Geriye Tekme', category: 'kalça', target: 'Gluteus Maximus', equipment: 'Sandalye Desteği', animType: 'quadruped', steps: ['Sandalyeye tutunup hafif öne eğilin.', 'Bacağınızı arkaya düz uzatıp sıkın.', 'Yavaşça bırakın.'], tip: 'Belden değil kalçadan uzanın.' },
+      { id: 'kl_09', name: 'Yana Yatarak Düz Bacak Kaldırma', category: 'kalça', target: 'Yan Kalça', equipment: 'Mat', animType: 'quadruped', steps: ['Yan uzanın.', 'Üstteki bacağı düz şekilde yukarı kaldırın.', 'Yavaşça indirin.'], tip: 'Ayak ucu hafifçe yere baksın.' },
+      { id: 'kl_10', name: 'Curtsy Lunge (Kraliyet Adımı)', category: 'kalça', target: 'Kalça Çevresi & Basen', equipment: 'Vücut Ağırlığı', animType: 'lunge', steps: ['Bir bacağı çapraz arkaya atarak çökün.', 'Öndeki topuktan iterek kalkın.', 'Taraf değiştirin.'], tip: 'Öndeki dizin içe dönmesini engelleyin.' },
+      { id: 'kl_11', name: 'Sumo Squat Pulse', category: 'kalça', target: 'İç Bacak ve Alt Kalça', equipment: 'Vücut Ağırlığı', animType: 'squat', steps: ['Ayakları genişçe açıp çökün.', 'En dipte 5 cm yaylanın.', 'Tam ayağa kalkmadan devam edin.'], tip: 'Dizleri sürekli dışa itin.' },
+      { id: 'kl_12', name: 'Köprüde Diz Açma-Kapama', category: 'kalça', target: 'Kalça Dışı & Sabitleyiciler', equipment: 'Mat', animType: 'bridge', steps: ['Köprü pozisyonunda havada kalın.', 'Kalçayı düşürmeden dizleri açıp kapatın.', '30 saniye sürdürün.'], tip: 'Topukların dış kenarlarına basın.' },
+      { id: 'kl_13', name: 'Ayakta Yana Bacak Açma', category: 'kalça', target: 'Yan Kalça Sıkılaşması', equipment: 'Sandalye Desteği', animType: 'quadruped', steps: ['Dik durun, sandalyeye tutunun.', 'Bir bacağı yana doğru açın.', 'Gövdeyi dik tutun.'], tip: 'Hareketi savurmadan yapın.' },
+      { id: 'kl_14', name: 'Yüzüstü Bacak Sıkıştırma', category: 'kalça', target: 'Arka Kalça & Bel', equipment: 'Mat', animType: 'superman', steps: ['Yüzüstü yatın.', 'Bacakları kalçayı sıkarak 15 cm kaldırın.', '1 saniye bekletip indirin.'], tip: 'Dizleri bükmemeye çalışın.' },
+      { id: 'kl_15', name: 'Bulgarian Split Squat', category: 'kalça', target: 'Tek Taraflı Kalça', equipment: 'Sandalye / Koltuk', animType: 'lunge', steps: ['Arka ayağı sandalyeye koyun.', 'Gövdeyi hafif öne yatırıp derin çökün.', 'Öndeki topukla kalkın.'], tip: 'Gövdeyi öne yatırmak kalçayı odaklar.' },
+      { id: 'kl_16', name: 'Rainbows (Gökkuşağı)', category: 'kalça', target: 'Tüm Kalça Çevresi', equipment: 'Mat', animType: 'quadruped', steps: ['Dört ayak üstünde bacağı arkaya uzatın.', 'Sağdan sola havada yay çizin.', 'Uç noktalarda yere dokunun.'], tip: 'Beli kıpırdatmayın.' },
+      { id: 'kl_17', name: 'Duvarda Kalça İtme', category: 'kalça', target: 'İzometrik Kalça Kuvveti', equipment: 'Duvar', animType: 'quadruped', steps: ['Yan durup dizinizi duvara yaslayın.', 'Dizinizle duvara kuvvetlice bastırın.', 'Yerdeki kalçada yanmayı hissedin.'], tip: '25 saniye aralıksız itin.' },
+      { id: 'kl_18', name: 'Yengeç Yürüyüşü', category: 'kalça', target: 'Gluteus Medius', equipment: 'Vücut Ağırlığı', animType: 'squat', steps: ['Yarım squat pozisyonunda kalın.', 'Bozmadan sağa ve sola adımlayın.', 'Dizleri içe düşürmeyin.'], tip: 'Ayak tabanlarını sürümeyin.' },
+      { id: 'kl_19', name: 'Good Morning', category: 'kalça', target: 'Kalça ve Hamstring', equipment: 'Ekipmansız', animType: 'squat', steps: ['Elleri baş arkasına alın.', 'Sırt düzken kalçayı geriye itin.', 'Kalçayı sıkarak dikilin.'], tip: 'Dizleri bükerek çökmeyin.' },
+      { id: 'kl_20', name: 'Step-Up (Sandalyeye Adımlama)', category: 'kalça', target: 'Kalça Şekillendirme', equipment: 'Sağlam Sandalye', animType: 'lunge', steps: ['Sandalyeye bir ayağınızı basın.', 'Zıplamadan üst bacağın gücüyle çıkın.', 'Kontrollü inin.'], tip: 'Üstteki ayağın topuğuna odaklanın.' },
 
       // ==================== BACAK (20 HAREKET) ====================
-      {
-        id: 'bc_01', name: 'Klasik Air Squat', category: 'bacak', target: 'Ön Bacak & Genel Bacak Kuvveti', equipment: 'Vücut Ağırlığı',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Bodyweight_Squat/0.jpg',
-        steps: ['Ayakları omuz genişliğinde açın.', 'Göğsü dik tutarak geriye doğru çökün.', 'Uyluklar yere paralel olunca topuklardan iterek kalkın.'],
-        tip: 'Topukların yerden kalkmamasına dikkat edin.'
-      },
-      {
-        id: 'bc_02', name: 'İleri Lunge (Walking/Forward Lunge)', category: 'bacak', target: 'Quadriceps & Denge', equipment: 'Vücut Ağırlığı',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Bodyweight_Walking_Lunge/0.jpg',
-        steps: ['Öne doğru geniş bir adım atın.', 'İki diz de 90 derece bükülecek şekilde alçalın.', 'Öndeki ayaktan güç alıp geri toplanın.'],
-        tip: 'Gövdenin öne devrilmesini engelleyin.'
-      },
-      {
-        id: 'bc_03', name: 'Geriye Lunge (Reverse Lunge)', category: 'bacak', target: 'Diz Dostu Ön/Arka Bacak', equipment: 'Vücut Ağırlığı',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Bodyweight_Drop_Lunge/0.jpg',
-        steps: ['Dik durun, bir adımı geriye doğru atın.', 'Arka diz yere hafifçe yaklaşana dek çökün.', 'Öndeki bacakla iterek başlangıç pozisyonuna gelin.'],
-        tip: 'Diz problemi olanlar için öne lunge’dan çok daha güvenlidir.'
-      },
-      {
-        id: 'bc_04', name: 'Wall Sit (Duvarda Sandalye)', category: 'bacak', target: 'Ön Bacak Dayanıklılığı (İzometrik)', equipment: 'Duvar',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Isometric_Wipers/0.jpg',
-        steps: ['Sırtınızı duvara verip 90 derece oturma pozisyonuna gelin.', 'Dizler ayak bileklerinin tam üstünde olmalı.', 'Belirlenen süre (30-45 sn) boyunca kımıldamadan kalın.'],
-        tip: 'Elleri bacakların üstüne koyup destek almayın.'
-      },
-      {
-        id: 'bc_05', name: 'Yan Lunge (Side Lunge)', category: 'bacak', target: 'İç Bacak ve Dış Kalça', equipment: 'Vücut Ağırlığı',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Bodyweight_Side_Lunge/0.jpg',
-        steps: ['Yana doğru büyük bir adım atın ve o bacağınızın üstüne çökün.', 'Diğer bacak tamamen gergin ve düz kalsın.', 'Bükülü bacaktan kuvvetle itip merkeze dönün.'],
-        tip: 'Çökerken kalçayı arkaya doğru vermeyi unutmayın.'
-      },
-      {
-        id: 'bc_06', name: 'Ayakta Kalf Kaldırma (Calf Raise)', category: 'bacak', target: 'Kalf (Baldır Kasları)', equipment: 'Düz Zemin / Basamak',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Standing_Calf_Raises/0.jpg',
-        steps: ['Ayak parmak uçlarınızın üstünde olabildiğince yükseğe çıkın.', 'Tepe noktada baldırları sıkıp 1 saniye durun.', 'Topukları yere çok yavaşça bırakın.'],
-        tip: 'Bir basamak kenarında yaparsanız hareket menzili artar.'
-      },
-      {
-        id: 'bc_07', name: 'Tek Bacak Kalf Kaldırma', category: 'bacak', target: 'İzole Baldır Güçlendirme', equipment: 'Duvar Desteği',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Standing_Calf_Raises/1.jpg',
-        steps: ['Denge için duvara hafifçe dokunun.', 'Bir ayağınızı havaya kaldırıp diğer ayak parmak ucunda yükselin.', 'Tükenişe kadar tekrarlayın.'],
-        tip: 'Yaylanmadan, kasın yandığını hissederek sürdürün.'
-      },
-      {
-        id: 'bc_08', name: 'Sandalye Squatı (Box Squat)', category: 'bacak', target: 'Kusursuz Çöküş Formu', equipment: 'Sandalye',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Bodyweight_Squat/1.jpg',
-        steps: ['Sandalyenin önüne dikilin.', 'Geriye oturur gibi çökün, kalça sandalyeye değdiği an hiç oturmadan geri kalkın.', 'Dizleri kilitlemeden akıcı devam edin.'],
-        tip: 'Özellikle dizleri koruyarak doğru form kazanmak için idealdir.'
-      },
-      {
-        id: 'bc_09', name: 'Cossack Squat', category: 'bacak', target: 'Derin Esneklik & İç Bacak', equipment: 'Vücut Ağırlığı',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Bodyweight_Side_Lunge/1.jpg',
-        steps: ['Geniş duruş alın, bir yana sonuna kadar derin çökün.', 'Uzatılan bacağın ayak parmakları yukarı baksın.', 'Topuktan güç alarak kalkın ve diğer tarafa geçin.'],
-        tip: 'Dengenizi korumak için kolları öne uzatabilirsiniz.'
-      },
-      {
-        id: 'bc_10', name: 'Zıplayarak Squat (Jump Squat)', category: 'bacak', target: 'Patlayıcı Güç & Yağ Yakımı', equipment: 'Vücut Ağırlığı',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Jumping_Jacks/0.jpg',
-        steps: ['Standart squat yapın.', 'Kalkışta ayak parmak uçlarından yaylanarak yukarı sıçrayın.', 'Yere yumuşakça inip doğrudan bir sonraki squata geçin.'],
-        tip: 'Yere düşerken dizleri kilitlemeyin, esnek şekilde karşılayın.'
-      },
-      {
-        id: 'bc_11', name: 'Tek Bacak RDL (Romanian Deadlift)', category: 'bacak', target: 'Arka Bacak (Hamstring) & Denge', equipment: 'Şişe / Vücut Ağırlığı',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Romanian_Deadlift/0.jpg',
-        steps: ['Tek ayak üzerinde durun, diz hafif kırık kalsın.', 'Gövdenizi öne eğerken serbest bacağı arkaya düz uzatın.', 'Yerdeki bacağın arkasında gerilmeyi hissedip kalkın.'],
-        tip: 'Sırtınızı kamburlaştırmayın, kalçayı hizalı tutun.'
-      },
-      {
-        id: 'bc_12', name: 'Yerde Havlu ile Hamstring Curl', category: 'bacak', target: 'İzole Arka Bacak Çekişi', equipment: 'Kaygan Zemin + Havlu',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Glute_Bridge/1.jpg',
-        steps: ['Sırtüstü uzanın, topuklarınızın altına küçük bir havlu koyun.', 'Köprü pozisyonuna kalkarken topuklarınızı ileri kaydırın.', 'Topukları kendinize doğru çekerek kalçayı kaldırın.'],
-        tip: 'Arka bacak kaslarını en etkili yakan ev hareketidir.'
-      },
-      {
-        id: 'bc_13', name: 'Dar Ayak Squat (Narrow Squat)', category: 'bacak', target: 'Dış Ön Bacak (Vastus Lateralis)', equipment: 'Vücut Ağırlığı',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Bodyweight_Squat/0.jpg',
-        steps: ['Ayaklarınızı birbirine bitişik veya çok yakın tutun.', 'Gövdeyi düz tutarak geriye çökün.', 'Topuklardan güç alarak dikilin.'],
-        tip: 'Dizlerin öne doğru aşırı fırlamasını engellemeye çalışın.'
-      },
-      {
-        id: 'bc_14', name: 'Statik Lunge Hold (Lunge Bekleyişi)', category: 'bacak', target: 'Diz Stabilizasyonu & Kas Tonusu', equipment: 'Vücut Ağırlığı',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Bodyweight_Walking_Lunge/1.jpg',
-        steps: ['Lunge pozisyonuna inip dizler 90 derecedeyken durun.', '20-30 saniye boyunca sabit kalarak kasları sıkın.', 'Diğer bacakla aynısını uygulayın.'],
-        tip: 'Ağırlık merkezini tam iki bacağın ortasında tutun.'
-      },
-      {
-        id: 'bc_15', name: 'Plie Squat (Parmak Ucunda)', category: 'bacak', target: 'İç Bacak & Baldır', equipment: 'Vücut Ağırlığı',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Sumo_Squat/0.jpg',
-        steps: ['Geniş bacak açıklığıyla çökün.', 'Aşağıdayken parmak uçlarına kalkın ve bu şekilde çömelip kalkın.', 'İç bacakları ve baldırları sıkın.'],
-        tip: 'Dengenizi sağlamak için kollarınızı göğüs hizasında kenetleyin.'
-      },
-      {
-        id: 'bc_16', name: 'Duvarda Tek Ayak Kalf', category: 'bacak', target: 'Aşil Tendonu & Derin Baldır', equipment: 'Duvar',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Standing_Calf_Raises/0.jpg',
-        steps: ['Ellerinizi duvara dayayın ve arkadaki bacağı düz tutun.', 'Öndeki bacak bükülürken arkadaki bacağın kalf kasını gerip parmak ucuna kalkın.', 'Kası 2 saniye sıkıp yavaşça indirin.'],
-        tip: 'Baldır kramplarını önlemek için mükemmeldir.'
-      },
-      {
-        id: 'bc_17', name: 'Yatarak İç Bacak Kaldırma (Adductor Raise)', category: 'bacak', target: 'İç Bacak Sıkılaşması', equipment: 'Mat',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Side_Leg_Raises/1.jpg',
-        steps: ['Yan uzanın, üstteki bacağı kırıp öne yere basın.', 'Alttaki düz bacağı yerden yukarı doğru kaldırın.', 'En tepede iç bacağı sıkıp kontrollü indirin.'],
-        tip: 'Bacağınızı savurmayın, kas kuvvetiyle kaldırın.'
-      },
-      {
-        id: 'bc_18', name: 'Pistol Squat (Sandalyeye Tek Bacak)', category: 'bacak', target: 'Maksimum Bacak Kuvveti', equipment: 'Sandalye',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Single_Leg_Squat/0.jpg',
-        steps: ['Bir bacağınızı öne uzatın, tek ayak üzerinde durun.', 'Tek bacakla yavaşça sandalyeye oturun.', 'Diğer ayağı yere basmadan aynı bacakla ayağa fırlayın.'],
-        tip: 'İnerken gövdenizi kontrol altında tutun.'
-      },
-      {
-        id: 'bc_19', name: 'Bacak Makası (Scissor Kicks)', category: 'bacak', target: 'Ön Bacak & Alt Karın', equipment: 'Mat',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Flutter_Kicks/0.jpg',
-        steps: ['Sırtüstü uzanın, elleri kalçanın altına koyun.', 'Bacakları 15 cm yukarı kaldırıp birbirinin üzerinden çapraz makas hareketi yapın.', 'Dizleri kırmadan sürdürün.'],
-        tip: 'Beli yerden kaldırmayarak karından da güç alın.'
-      },
-      {
-        id: 'bc_20', name: 'Tiburón Bacak Açış', category: 'bacak', target: 'Dış Bacak & IT Band', equipment: 'Mat',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Side_Leg_Raises/0.jpg',
-        steps: ['Yan pozisyonda dirsek üstüne çıkın.', 'Bacağı geriye 30 derece açıyla uzatıp yukarı kaldırın.', 'Bacak ve kalça bağlantısını hissedin.'],
-        tip: 'Belinizi sabit tutun.'
-      },
+      { id: 'bc_01', name: 'Klasik Air Squat', category: 'bacak', target: 'Ön Bacak & Genel Kuvvet', equipment: 'Vücut Ağırlığı', animType: 'squat', steps: ['Omuz genişliğinde durun.', 'Geriye oturur gibi derin çökün.', 'Topuklardan güçle kalkın.'], tip: 'Topuklar yerden kalkmasın.' },
+      { id: 'bc_02', name: 'İleri Lunge', category: 'bacak', target: 'Quadriceps & Denge', equipment: 'Vücut Ağırlığı', animType: 'lunge', steps: ['Öne geniş bir adım atın.', 'Dizler 90 derece bükülsün.', 'Öndeki ayaktan güçle geri dönün.'], tip: 'Gövdeyi dik tutun.' },
+      { id: 'bc_03', name: 'Geriye Lunge (Reverse)', category: 'bacak', target: 'Diz Dostu Ön/Arka Bacak', equipment: 'Vücut Ağırlığı', animType: 'lunge', steps: ['Arkaya adım atarak çökün.', 'Arka diz hafifçe yere yaklaşsın.', 'Öndeki bacakla iterek dönün.'], tip: 'Dizleri korumak için idealdir.' },
+      { id: 'bc_04', name: 'Wall Sit (Duvarda Oturma)', category: 'bacak', target: 'Ön Bacak Dayanıklılığı', equipment: 'Duvar', animType: 'squat', steps: ['Sırtı duvara verip 90 derece çökün.', 'Dizler ayak bileği üstünde olsun.', '30-45 saniye kalın.'], tip: 'Eller bacakların üstüne konmaz.' },
+      { id: 'bc_05', name: 'Yan Lunge (Side Lunge)', category: 'bacak', target: 'İç Bacak ve Dış Kalça', equipment: 'Vücut Ağırlığı', animType: 'lunge', steps: ['Yana büyük bir adım atıp çökün.', 'Diğer bacak düz kalsın.', 'Kuvvetle itip merkeze dönün.'], tip: 'Kalçayı geriye vererek çökün.' },
+      { id: 'bc_06', name: 'Ayakta Kalf Kaldırma', category: 'bacak', target: 'Baldır Kasları (Kalf)', equipment: 'Düz Zemin / Basamak', animType: 'curl', steps: ['Parmak ucunda en tepeye çıkın.', '1 saniye kalfı sıkın.', 'Yavaşça yere bırakın.'], tip: 'Yaylanmadan kontrollü yapın.' },
+      { id: 'bc_07', name: 'Tek Bacak Kalf Kaldırma', category: 'bacak', target: 'İzole Baldır', equipment: 'Duvar Desteği', animType: 'curl', steps: ['Tek ayak üstünde yükselin.', 'Tükenene kadar devam edin.', 'Diğer bacağa geçin.'], tip: 'Tam menzilde çalışın.' },
+      { id: 'bc_08', name: 'Sandalye Squatı (Box Squat)', category: 'bacak', target: 'Kusursuz Çöküş Formu', equipment: 'Sandalye', animType: 'squat', steps: ['Sandalyeye değer gibi çökün.', 'Oturmadan anında geri kalkın.', 'Akıcı tempoyu koruyun.'], tip: 'Dizleri içeri düşürmeyin.' },
+      { id: 'bc_09', name: 'Cossack Squat', category: 'bacak', target: 'Derin Esneklik & İç Bacak', equipment: 'Vücut Ağırlığı', animType: 'lunge', steps: ['Bir yana derin çökün.', 'Düz bacağın ayak ucu yukarı baksın.', 'Topuktan güçle kalkın.'], tip: 'Denge için kolları öne uzatın.' },
+      { id: 'bc_10', name: 'Zıplayarak Squat', category: 'bacak', target: 'Patlayıcı Güç', equipment: 'Vücut Ağırlığı', animType: 'squat', steps: ['Squata inin.', 'Kalkarken sıçrayın.', 'Yere yumuşakça inin.'], tip: 'Dizleri bükerek inişi yumuşatın.' },
+      { id: 'bc_11', name: 'Tek Bacak RDL', category: 'bacak', target: 'Arka Bacak & Denge', equipment: 'Su Şişesi / Serbest', animType: 'squat', steps: ['Tek ayak üzerinde durun.', 'Gövdeyi eğerken bacağı arkaya uzatın.', 'Arka bacak gerilince kalkın.'], tip: 'Sırtı kamburlaştırmayın.' },
+      { id: 'bc_12', name: 'Yerde Havlu ile Hamstring Curl', category: 'bacak', target: 'İzole Arka Bacak', equipment: 'Kaygan Zemin + Havlu', animType: 'bridge', steps: ['Topuklar havlu üstünde uzanın.', 'Topukları kaydırarak köprü kurun.', 'Kendinize çekerek bacağı bükün.'], tip: 'Arka bacakları çok sert çalıştırır.' },
+      { id: 'bc_13', name: 'Dar Ayak Squat', category: 'bacak', target: 'Dış Ön Bacak', equipment: 'Vücut Ağırlığı', animType: 'squat', steps: ['Ayakları bitişik tutun.', 'Gövde düz çökün.', 'Topuklardan kalkın.'], tip: 'Dizlerin öne fırlamasını sınırlayın.' },
+      { id: 'bc_14', name: 'Statik Lunge Hold', category: 'bacak', target: 'Bacak Dayanıklılığı', equipment: 'Vücut Ağırlığı', animType: 'lunge', steps: ['Lunge çöküşünde durun.', '25 saniye kımıldamayın.', 'Taraf değiştirin.'], tip: 'Ağırlığı iki bacağa eşit dağıtın.' },
+      { id: 'bc_15', name: 'Plie Squat', category: 'bacak', target: 'İç Bacak & Baldır', equipment: 'Vücut Ağırlığı', animType: 'squat', steps: ['Geniş ayakla parmak ucuna kalkın.', 'Parmak ucunda çömelip kalkın.', 'İç bacakları sıkın.'], tip: 'Gövdeyi dimdik tutun.' },
+      { id: 'bc_16', name: 'Duvarda Tek Ayak Kalf', category: 'bacak', target: 'Aşil Tendonu & Derin Kalf', equipment: 'Duvar', animType: 'curl', steps: ['Duvara yaslanıp arkadaki kalfı gerin.', 'Parmak ucuna çıkıp bekleyin.', 'Yavaşça inin.'], tip: 'Derin gerilme sağlayın.' },
+      { id: 'bc_17', name: 'Yatarak İç Bacak Kaldırma', category: 'bacak', target: 'İç Bacak Sıkılaşması', equipment: 'Mat', animType: 'quadruped', steps: ['Yan yatıp alttaki bacağı düz kaldırın.', 'Tepe noktada iç bacağı sıkın.', 'Kontrollü indirin.'], tip: 'Savurmadan kas gücüyle kaldırın.' },
+      { id: 'bc_18', name: 'Pistol Squat (Sandalyeye)', category: 'bacak', target: 'Maksimum Bacak Gücü', equipment: 'Sandalye', animType: 'squat', steps: ['Bir bacağı öne uzatın.', 'Tek ayakla sandalyeye oturup kalkın.', 'Kolları önde tutun.'], tip: 'Diz hizasını koruyun.' },
+      { id: 'bc_19', name: 'Bacak Makası (Flutter)', category: 'bacak', target: 'Ön Bacak & Karın', equipment: 'Mat', animType: 'bridge', steps: ['Sırtüstü bacakları kaldırın.', 'Küçük makas hareketleri yapın.', 'Dizleri bükmeyin.'], tip: 'Beli yere yapıştırın.' },
+      { id: 'bc_20', name: 'Tiburón Bacak Açış', category: 'bacak', target: 'Dış Bacak', equipment: 'Mat', animType: 'quadruped', steps: ['Yan uzanın.', 'Bacağı 30 derece açıyla yukarı itin.', 'Bacak ve kalçayı hissedin.'], tip: 'Hareketi yavaşlatın.' },
 
       // ==================== KOL (20 HAREKET) ====================
-      {
-        id: 'kl_b01', name: 'Sandalye Dips (Triceps Dips)', category: 'kol', target: 'Arka Kol (Triceps)', equipment: 'Sandalye / Kanepe',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Bench_Dips/0.jpg',
-        steps: ['Elleri sandalyenin ön kenarına koyun, kalçayı boşluğa alın.', 'Dirsekleri 90 derece bükene dek inin.', 'Avuç içiyle sandalyeyi iterek kolları gerin.'],
-        tip: 'Dirseklerin yanlara açılmasına izin vermeyin, geriye bükün.'
-      },
-      {
-        id: 'kl_b02', name: 'Duvarda Elmas Şınav (Diamond Push-Up)', category: 'kol', target: 'Triceps Odaklı Şınav', equipment: 'Duvar / Zemin',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Pushups/0.jpg',
-        steps: ['Ellerinizi duvara koyup baş parmak ve işaret parmaklarınızla elmas şekli yapın.', 'Göğsü elmasın merkezine yaklaştırın.', 'Arka kolları sıkarak kendinizi geri itin.'],
-        tip: 'Zorlaştırmak için bunu mutfak tezgahında veya yerde yapın.'
-      },
-      {
-        id: 'kl_b03', name: 'Şişe/Dambıl ile Biceps Curl', category: 'kol', target: 'Ön Kol Pazu (Biceps)', equipment: '2 Adet Su Şişesi / Dambıl',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Bicep_Curls/0.jpg',
-        steps: ['Dirsekleri kaburgalara sabitleyin.', 'Ağırlıkları omuz hizasına kontrollü şekilde bükün.', 'Pazuyu sıkıp yavaşça indirin.'],
-        tip: 'Kaldırırken gövdeyi geriye sallamayın.'
-      },
-      {
-        id: 'kl_b04', name: 'Çekiç Büküş (Hammer Curl)', category: 'kol', target: 'Brachialis & Ön Kol Kalınlığı', equipment: 'Su Şişeleri',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Hammer_Curls/0.jpg',
-        steps: ['Avuç içleri birbirine bakacak şekilde şişeleri tutun.', 'Açıyı bozmadan çekiç vurur gibi ağırlığı kaldırın.', 'Tepe noktada kası gerin.'],
-        tip: 'Bileklerinizi bükmeden nötr tutun.'
-      },
-      {
-        id: 'kl_b05', name: 'Diz Üstü Wrist Curl (Bilek İçi)', category: 'kol', target: 'Ön Kol Fleksörleri (Bilek Gücü)', equipment: 'Hafif Şişe / Dambıl',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Palms-down_wrist_curl_over_a_bench/0.jpg',
-        steps: ['Ön kolunuzu dizinize veya masaya sabitleyin, avuç içi yukarı baksın.', 'Yalnızca bileğinizi bükerek ağırlığı yukarı kaldırın.', 'Aşağı parmak uçlarına kadar kaydırıp geri toplayın.'],
-        tip: 'Kolu oynatmayın, sadece bileği hareket ettirin.'
-      },
-      {
-        id: 'kl_b06', name: 'Ters Bilek Büküş (Reverse Wrist Curl)', category: 'kol', target: 'Ön Kol Ekstansörleri', equipment: 'Hafif Şişe',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Palms-up_wrist_curl_over_a_bench/0.jpg',
-        steps: ['Ön kolu masaya yaslayın, avuç içi bu sefer aşağı baksın.', 'Bileğinizi yukarı doğru geriye kaldırın.', 'Yavaşça başlangıç pozisyonuna indirin.'],
-        tip: 'Karpal tünel ve klavye yorgunluğunu önler.'
-      },
-      {
-        id: 'kl_b07', name: 'Triceps Kickback (Geriye Kol İtme)', category: 'kol', target: 'İzole Arka Kol', equipment: 'Su Şişesi',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Tricep_Dumbbell_Kickback/0.jpg',
-        steps: ['Gövdeyi öne eğin, dirseği gövde hizasında yukarı çekip kilitleyin.', 'Yalnızca ön kolu arkaya uzatarak kolu dümdüz yapın.', 'Arka kolu sıkıp geri bükün.'],
-        tip: 'Dirseğinizin aşağı düşmesine asla izin vermeyin.'
-      },
-      {
-        id: 'kl_b08', name: 'Baş Üstü Triceps Uzatma (Overhead Extension)', category: 'kol', target: 'Triceps Uzun Başı', equipment: '1 Büyük Şişe',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Standing_Dumbbell_Triceps_Extension/0.jpg',
-        steps: ['Ağırlığı iki elle başınızın üzerine kaldırın.', 'Dirsekleri kulak yanında tutarak enseye doğru indirin.', 'Kolları yukarı doğru düzleştirerek tricepsi sıkın.'],
-        tip: 'Dirseklerin iki yana açılmasını engelleyin.'
-      },
-      {
-        id: 'kl_b09', name: 'Planktan Şınava Geçiş (Up-Down Plank)', category: 'kol', target: 'Triceps, Omuz & Core', equipment: 'Mat',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Pushups/1.jpg',
-        steps: ['Dirsekler üstünde plank pozisyonu alın.', 'Önce sağ, sonra sol elinizi basarak şınav pozisyonuna çıkın.', 'Tekrar tek tek dirseklere inin.'],
-        tip: 'Gövdenin sağa sola sallanmasını minimuma indirin.'
-      },
-      {
-        id: 'kl_b10', name: 'Konsantrasyon Büküşü (Concentration Curl)', category: 'kol', target: 'Pazu Tepe Noktası (Biceps Peak)', equipment: 'Sandalye + Şişe',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Concentration_Curls/0.jpg',
-        steps: ['Sandalyeye oturun, dirseğinizi iç uyluğunuza dayayın.', 'Ağırlığı omzunuza doğru bükün.', 'Pazuyu 1 saniye sıkıp yavaşça açın.'],
-        tip: 'Vücudunuzdan destek almadan saf kol kuvveti kullanın.'
-      },
-      {
-        id: 'kl_b11', name: 'Parmak Ucu Şınavı (Fingertip Hold)', category: 'kol', target: 'Parmak ve Ön Kol Gücü', equipment: 'Duvar / Mat',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Pushups/0.jpg',
-        steps: ['Duvarda veya dizler üstünde durun.', 'Avuç içlerini kaldırıp sadece 10 parmak ucunuza basın.', '20 saniye boyunca bu baskıyı koruyun.'],
-        tip: 'Kavrama (grip) kuvvetini inanılmaz geliştirir.'
-      },
-      {
-        id: 'kl_b12', name: 'Zottman Curl', category: 'kol', target: 'Hem Pazu Hem Ön Kol', equipment: 'Su Şişeleri',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Bicep_Curls/0.jpg',
-        steps: ['Avuç içi yukarı bakarak ağırlığı kaldırın.', 'Tepe noktadayken bileğinizi 180 derece çevirip avuç içini yere baktırın.', 'Aşağı bu şekilde yavaşça indirin.'],
-        tip: 'İniş evresini 3 saniyede tamamlayın.'
-      },
-      {
-        id: 'kl_b13', name: 'Yengeç Dips (Crab Dips)', category: 'kol', target: 'Arka Kol ve Esneklik', equipment: 'Mat',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Bench_Dips/0.jpg',
-        steps: ['Ters masa pozisyonuna geçin (eller ve ayaklar yerde, karın yukarıda).', 'Dirseklerinizi bükerek kalçayı yere yaklaştırın.', 'Kolları iterek kalçayı tekrar yukarı kaldırın.'],
-        tip: 'Omuzları sıkıştırmadan rahat tutun.'
-      },
-      {
-        id: 'kl_b14', name: 'Havlu Sıkma / Bükme (Towel Wring)', category: 'kol', target: 'Bilek ve Ön Kol Dayanıklılığı', equipment: 'Kuru Havlu',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Palms-up_wrist_curl_over_a_bench/0.jpg',
-        steps: ['Bir el havlusunu iki elinizle sıkıca kavrayın.', 'Islak bir havluyu sıkar gibi ters yönlere olanca gücünüzle burun.', '30 saniye boyunca gerginliği bırakmayın.'],
-        tip: 'Ön kolların saniyeler içinde yandığını göreceksiniz.'
-      },
-      {
-        id: 'kl_b15', name: 'İzometrik Pazu Çekişi (Biceps Towel)', category: 'kol', target: 'Maksimum Kas Aktivasyonu', equipment: 'Havlu',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Bicep_Curls/0.jpg',
-        steps: ['Ayağınızın altından uzun bir havlu geçirin ve iki ucundan tutun.', 'Kolları 90 dereceye getirip yukarı çekmeye çalışın.', 'Havlu esnemediği için kaslarınızı tüm gücünüzle sıkın.'],
-        tip: '10 saniye boyunca nefes alarak çekiş yapın.'
-      },
-      {
-        id: 'kl_b16', name: 'Yerde Cobra Push-Up (Triceps Odaklı)', category: 'kol', target: 'Alt Arka Kol & Göğüs', equipment: 'Mat',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Pushups/1.jpg',
-        steps: ['Yüzüstü uzanın, elleri göğsün hemen yanına koyun.', 'Kolları iterek sadece üst gövdeyi kaldırın, dirsekleri gerginleştirin.', 'Tricepsleri sıkarak başlangıca inin.'],
-        tip: 'Alt vücudu yerde rahat bırakın.'
-      },
-      {
-        id: 'kl_b17', name: 'Duvarda Dirsek İtme (Wall Triceps Press)', category: 'kol', target: 'Triceps Gücü', equipment: 'Duvar',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Pushups/0.jpg',
-        steps: ['Ön kollarınızı duvara yaslayın.', 'Sadece avuç içlerinizle duvarı iterek dirseklerinizi duvardan kesin ve kolları düzleştirin.', 'Yavaşça dirsekleri duvara geri koyun.'],
-        tip: 'Ağırlığı ön kollarınızdan arka kollara aktarın.'
-      },
-      {
-        id: 'kl_b18', name: 'Pike Push-Up (Kol ve Omuz)', category: 'kol', target: 'Triceps ve Omuz Başları', equipment: 'Mat',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Pushups/0.jpg',
-        steps: ['Ters V pozisyonu alın (kalça havada, baş kolların arasında).', 'Başınızın tepesini yere doğru kontrollüce indirin.', 'Avuçlarla yeri iterek tepeye çıkın.'],
-        tip: 'Omuz ve tricepsi aynı anda çalıştırır.'
-      },
-      {
-        id: 'kl_b19', name: 'Şişe ile Çift Taraflı Pazu', category: 'kol', target: 'Eşzamanlı Pazu Dengesi', equipment: '2 Şişe',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Bicep_Curls/0.jpg',
-        steps: ['Ayakta durun, iki kolu aynı anda kaldırın.', '3 saniye yukarıda tutup 3 saniyede indirin.', 'Hareketi ritmik olarak tekrarlayın.'],
-        tip: 'Kolların aynı anda inip kalktığından emin olun.'
-      },
-      {
-        id: 'kl_b20', name: 'Kitap Taşıma (Pinch Grip)', category: 'kol', target: 'Parmak Uçları ve Bilek Kuvveti', equipment: '2 Kalın Kitap',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Palms-down_wrist_curl_over_a_bench/0.jpg',
-        steps: ['Kalın bir kitabı sadece parmak uçlarınızla kavrayın.', 'Kolları yanlara salıp 40 saniye boyunca kitabı düşürmeden yürüyün.', 'Diğer elle tekrarlayın.'],
-        tip: 'Bilek ve kavrama gücünü güçlendirir.'
-      },
+      { id: 'kl_b01', name: 'Sandalye Dips (Triceps)', category: 'kol', target: 'Arka Kol (Triceps)', equipment: 'Sandalye', animType: 'dips', steps: ['Elleri sandalyeye koyup kalçayı öne alın.', 'Dirsekleri 90 derece bükün.', 'Kolları iterek gerin.'], tip: 'Dirsekleri yanlara açmayın.' },
+      { id: 'kl_b02', name: 'Duvarda Elmas Şınav', category: 'kol', target: 'Triceps Odaklı Şınav', equipment: 'Duvar', animType: 'row', steps: ['Ellerle elmas şekli yapın.', 'Göğsü ellere yaklaştırın.', 'Arka kolları sıkarak itin.'], tip: 'Gövdeyi düz bir hat tutun.' },
+      { id: 'kl_b03', name: 'Şişe ile Biceps Curl', category: 'kol', target: 'Ön Kol Pazu (Biceps)', equipment: 'Su Şişeleri', animType: 'curl', steps: ['Dirsekleri gövdeye sabitleyin.', 'Şişeleri omuza bükün.', 'Pazuyu sıkıp yavaşça indirin.'], tip: 'Gövdeyi geriye sallamayın.' },
+      { id: 'kl_b04', name: 'Çekiç Büküş (Hammer Curl)', category: 'kol', target: 'Brachialis & Ön Kol', equipment: 'Su Şişeleri', animType: 'curl', steps: ['Avuçlar birbirine baksın.', 'Çekiç tutar gibi kaldırın.', 'Tepe noktada kası gerin.'], tip: 'Bileği bükmeyin.' },
+      { id: 'kl_b05', name: 'Diz Üstü Wrist Curl', category: 'kol', target: 'Bilek & Ön Kol', equipment: 'Hafif Şişe', animType: 'curl', steps: ['Ön kolu dizine koy, avuç yukarı.', 'Sadece bileği yukarı bük.', 'Parmak uçlarına kaydırıp çek.'], tip: 'Yalnızca bileği oynatın.' },
+      { id: 'kl_b06', name: 'Ters Bilek Büküş', category: 'kol', target: 'Ön Kol Üstü', equipment: 'Hafif Şişe', animType: 'curl', steps: ['Avuç içi aşağı baksın.', 'Bileği yukarı geriye kaldır.', 'Yavaşça indir.'], tip: 'Masa başı bilek ağrılarını önler.' },
+      { id: 'kl_b07', name: 'Triceps Kickback', category: 'kol', target: 'İzole Arka Kol', equipment: 'Su Şişesi', animType: 'row', steps: ['Öne eğilip dirseği gövdeye sabitle.', 'Sadece ön kolu arkaya uzatıp düzleştir.', 'Tricepsi sık.'], tip: 'Dirsek aşağı düşmesin.' },
+      { id: 'kl_b08', name: 'Baş Üstü Triceps Uzatma', category: 'kol', target: 'Triceps Uzun Başı', equipment: '1 Şişe', animType: 'curl', steps: ['Ağırlığı enseye indir.', 'Kolları yukarı gererek düzelt.', 'Tricepsi sık.'], tip: 'Dirsekleri kulak yanında tut.' },
+      { id: 'kl_b09', name: 'Planktan Şınava Geçiş', category: 'kol', target: 'Triceps & Omuz', equipment: 'Mat', animType: 'row', steps: ['Dirsek plankından şınav pozisyonuna çık.', 'Tek tek dirseklere in.', 'Tekrarlayın.'], tip: 'Kalçayı sallamamaya çalışın.' },
+      { id: 'kl_b10', name: 'Konsantrasyon Büküşü', category: 'kol', target: 'Biceps Tepe Noktası', equipment: 'Sandalye + Şişe', animType: 'curl', steps: ['Dirseği bacak içine daya.', 'Şişeyi omuza kaldır.', 'Pazuyu 1 saniye sık.'], tip: 'Sadece pazu kuvveti kullanın.' },
+      { id: 'kl_b11', name: 'Parmak Ucu Duruşu', category: 'kol', target: 'Parmak & Kavrama Gücü', equipment: 'Duvar / Mat', animType: 'row', steps: ['Duvarda parmak uçlarına bas.', '20 saniye baskıyı koru.', 'Ön kolları hisset.'], tip: 'Kavrama kuvvetini artırır.' },
+      { id: 'kl_b12', name: 'Zottman Curl', category: 'kol', target: 'Biceps & Ön Kol', equipment: 'Su Şişeleri', animType: 'curl', steps: ['Avuç yukarı kaldır.', 'Tepede bileği ters çevir (avuç aşağı).', 'Yavaşça indir.'], tip: 'İnişi 3 saniyede yapın.' },
+      { id: 'kl_b13', name: 'Yengeç Dips', category: 'kol', target: 'Arka Kol', equipment: 'Mat', animType: 'dips', steps: ['Ters masa pozisyonu al.', 'Dirsekleri büküp kalçayı yaklaştır.', 'İterek kalk.'], tip: 'Omuzları rahat tutun.' },
+      { id: 'kl_b14', name: 'Havlu Sıkma / Bükme', category: 'kol', target: 'Bilek & Ön Kol', equipment: 'Havlu', animType: 'curl', steps: ['Havluyu iki elle sıkıca tut.', 'Ters yönlere burgu yap.', '30 saniye bırakma.'], tip: 'Ön kollar hızla yanacaktır.' },
+      { id: 'kl_b15', name: 'İzometrik Pazu Çekişi', category: 'kol', target: 'Maksimum Kasılma', equipment: 'Havlu', animType: 'curl', steps: ['Ayağın altından havluyu geçir.', '90 derecede tüm gücünle çek.', '10 saniye nefesle kas.'], tip: 'Kasılmayı en üst seviyeye çıkarın.' },
+      { id: 'kl_b16', name: 'Cobra Push-Up (Triceps)', category: 'kol', target: 'Arka Kol', equipment: 'Mat', animType: 'superman', steps: ['Eller göğüs yanında yat.', 'Kolları itip gövdeyi kaldır.', 'Tricepsi sık.'], tip: 'Alt vücudu gevşek bırakın.' },
+      { id: 'kl_b17', name: 'Duvarda Triceps İtme', category: 'kol', target: 'Triceps Gücü', equipment: 'Duvar', animType: 'row', steps: ['Ön kolları duvara daya.', 'Avuçla itip dirsekleri duvardan kes.', 'Yavaşça koy.'], tip: 'Arka kollarla itin.' },
+      { id: 'kl_b18', name: 'Pike Push-Up', category: 'kol', target: 'Triceps & Omuz', equipment: 'Mat', animType: 'row', steps: ['Ters V pozisyonu al.', 'Tepeni yere yaklaştır.', 'İterek çık.'], tip: 'Omuz ve kolu birlikte güçlendirir.' },
+      { id: 'kl_b19', name: 'Çift Taraflı Pazu Curl', category: 'kol', target: 'Pazu Dengesi', equipment: '2 Şişe', animType: 'curl', steps: ['İki kolu aynı anda kaldır.', '3 sn çık, 3 sn in.', 'Ritmik sürdür.'], tip: 'Kollar aynı hızda insin.' },
+      { id: 'kl_b20', name: 'Kitap Taşıma (Pinch)', category: 'kol', target: 'Ön Kol & Parmak', equipment: '2 Kalın Kitap', animType: 'curl', steps: ['Kitabı parmak ucunla tut.', '40 saniye yürü.', 'Diğer ele geç.'], tip: 'Parmak kuvveti kazandırır.' },
 
       // ==================== SIRT (20 HAREKET) ====================
-      {
-        id: 'sr_01', name: 'Superman Tutuşu (Sırt & Bel)', category: 'sırt', target: 'Omurga Çevresi & Duruş Düzeltme', equipment: 'Mat',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Superman/0.jpg',
-        steps: ['Yüzüstü uzanıp kolları ileriye uzatın.', 'Göğsü ve bacakları aynı anda yerden 10-15 cm kaldırın.', 'Sırt kaslarını sıkarak 2 saniye bekleyip inin.'],
-        tip: 'Boynu aşırı arkaya bükmeyin, bakışlar matta kalsın.'
-      },
-      {
-        id: 'sr_02', name: 'Kapı Pervazı Çekişi (Doorframe Row)', category: 'sırt', target: 'Kanat Kasları (Latissimus)', equipment: 'Kapı Pervazı',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Inverted_Row/0.jpg',
-        steps: ['Kapı pervazını iki elinizle sıkıca kavrayın, ayakları kapı eşiğine dayayın.', 'Gövdenizi arkaya doğru gerin.', 'Göğsü kapıya çekerken kürek kemiklerini birbirine bastırın.'],
-        tip: 'Kollardan değil, sırtınızı geriye çekerek güç alın.'
-      },
-      {
-        id: 'sr_03', name: 'Y-T-W Açışları (Yüzüstü)', category: 'sırt', target: 'Üst Sırt, Rhomboid & Omuz Arkası', equipment: 'Mat',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Superman/0.jpg',
-        steps: ['Yüzüstü yatın. Kollarla önce "Y", sonra "T", sonra dirsekleri büküp "W" harfi yapın.', 'Her harfte kürek kemiklerini sıkarak kollarınızı yukarı kaldırın.', 'Ritmik olarak harfleri tekrarlayın.'],
-        tip: 'Masa başı kamburluğunu gidermek için en etkili harekettir.'
-      },
-      {
-        id: 'sr_04', name: 'Havlu ile Lat Pulldown', category: 'sırt', target: 'Geniş Sırt (Kanatlar)', equipment: 'Gergin Bir Havlu',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Wide-Grip_Lat_Pulldown/0.jpg',
-        steps: ['Ayakta veya yüzüstü havluyu iki ucundan olanca gücünüzle dışa doğru asılarak gerin.', 'Havlu gerginliğini hiç bozmadan enseye/köprücük kemiğine doğru çekin.', 'Sırt kaslarını sonuna kadar sıkın.'],
-        tip: 'Havlu gevşerse hareket etkisini kaybeder, sürekli dışa çekin.'
-      },
-      {
-        id: 'sr_05', name: 'Bird-Dog (Çapraz Kol & Bacak)', category: 'srıt', category: 'sırt', target: 'Derin Sırt Sabitleyicileri', equipment: 'Mat',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Superman/0.jpg',
-        steps: ['Dört ayak pozisyonuna geçin.', 'Sağ kolu ileri, sol bacağı arkaya dümdüz uzatın.', 'Gövdeyi kıpırdatmadan 2 saniye bekleyip başlangıca dönün ve yön değiştirin.'],
-        tip: 'Beli aşağı düşürmeyin, karın kaslarını içeri çekin.'
-      },
-      {
-        id: 'sr_06', name: 'Yüzüstü Kar Meleği (Prone Snow Angel)', category: 'sırt', target: 'Orta ve Alt Sırt', equipment: 'Mat',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Superman/0.jpg',
-        steps: ['Yüzüstü yatın, göğsü hafifçe yerden kaldırın.', 'Kolları yere değdirmeden kalçadan başınızın üstüne doğru daire çizerek gezdirin.', 'Kürek kemiklerini sürekli sıkı tutun.'],
-        tip: 'Elleri yere hiç bırakmadan 10 tur dönün.'
-      },
-      {
-        id: 'sr_07', name: 'Süpürge Sapı ile Eğilerek Çekiş (Bent Over Row)', category: 'sırt', target: 'Orta Sırt & Trapezius', equipment: 'Süpürge Sapı / 2 Şişe',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Bent_Over_Barbell_Row/0.jpg',
-        steps: ['Dizleri hafif büküp gövdeyi 45 derece öne eğin, sırt dümdüz kalsın.', 'Ağırlığı göbek deliğinize doğru çekin.', 'Dirsekleri geriye fırlatıp kürek kemiklerini birbirine yapıştırın.'],
-        tip: 'Omurganın düzlüğünü asla bozmayın.'
-      },
-      {
-        id: 'sr_08', name: 'Kobra Duruşu (Cobra Stretch & Hold)', category: 'sırt', target: 'Alt Sırt Esnekliği & Kuvveti', equipment: 'Mat',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Superman/0.jpg',
-        steps: ['Yüzüstü uzanın, eller göğüs hizasında.', 'Kollardan çok sırt kaslarınızı kullanarak göğsü yukarı kaldırın.', 'Tepe noktada nefes alıp yavaşça inin.'],
-        tip: 'Kalçayı yerden kaldırmayın.'
-      },
-      {
-        id: 'sr_09', name: 'Yüzüstü Yüzme (Swimmers)', category: 'sırt', target: 'Tüm Arka Zincir', equipment: 'Mat',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Superman/0.jpg',
-        steps: ['Yüzüstü yatın, kol ve bacakları uzatın.', 'Sağ kol ile sol bacağı, ardından sol kol ile sağ bacağı seri şekilde yukarı-aşağı çırpın.', 'Suda yüzüyormuş gibi ritmik sürdürün.'],
-        tip: 'Kafayı çok kaldırmadan omurgayı düz tutun.'
-      },
-      {
-        id: 'sr_10', name: 'Ters Masa Çekişi (Masa Altı Row)', category: 'sırt', target: 'Sırt Kalınlığı (Inverted Row)', equipment: 'Sağlam Masa',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Inverted_Row/0.jpg',
-        steps: ['Sağlam bir masanın altına girip kenarlarını kavrayın.', 'Vücudu plank gibi düz tutarak göğsünüzü masaya doğru çekin.', 'Kontrollüce aşağı inin.'],
-        tip: 'Masanın devrilmeyeceğinden emin olun.'
-      },
-      {
-        id: 'sr_11', name: 'Duvarda Melekler (Wall Angels)', category: 'sırt', target: 'Duruş Bozukluğu (Postür)', equipment: 'Duvar',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Isometric_Wipers/0.jpg',
-        steps: ['Sırtınızı, başınızı ve kollarınızı duvara tamamen yaslayın (90 derece dirsekler).', 'Teması hiç kesmeden kolları baş üzerine kaydırın.', 'Aşağı indirirken kürek kemiklerini birbirine yaklaştırın.'],
-        tip: 'Beli duvardan uzaklaştırmamaya gayret edin.'
-      },
-      {
-        id: 'sr_12', name: 'Yerde Skapula Şınavı (Scapular Push-Up)', category: 'sırt', target: 'Serratus Anterior & Kürek Kemiği', equipment: 'Mat',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Pushups/0.jpg',
-        steps: ['Plank pozisyonunda durun, kollarınızı hiç bükmeyin.', 'Sadece kürek kemiklerinizi birbirine yaklaştırıp uzaklaştırın.', 'Göğsü 5 cm indirip yukarı itin.'],
-        tip: 'Omuz sağlığı için mükemmel bir koruyucudur.'
-      },
-      {
-        id: 'sr_13', name: 'Yüzüstü T Açış (Reverse Fly)', category: 'sırt', target: 'Arka Omuz ve Orta Sırt', equipment: '2 Küçük Şişe / Mat',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Superman/0.jpg',
-        steps: ['Yüzüstü yatın, kolları iki yana "T" şeklinde açın.', 'Başparmaklar yukarı bakacak şekilde kolları tavana kaldırın.', 'Tepe noktada kürek kemiklerini sıkıştırın.'],
-        tip: 'Ağırlıktan ziyade sıkıştırma hissine odaklanın.'
-      },
-      {
-        id: 'sr_14', name: 'Kedi-Deve Hareketi (Cat-Cow)', category: 'sırt', target: 'Omurga Hareketliliği ve Rahatlama', equipment: 'Mat',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Cat_Cow/0.jpg',
-        steps: ['Dört ayak pozisyonu alın.', 'Nefes verirken sırtınızı kamburlaştırıp başınızı içeri alın.', 'Nefes alırken beli çukurlaştırıp yukarı bakın.'],
-        tip: 'Sırt ağrılarını hafifletmek için harikadır.'
-      },
-      {
-        id: 'sr_15', name: 'Tek Kol Şişe Row (Koltuk Destekli)', category: 'sırt', target: 'Tek Taraflı Kanat', equipment: 'Koltuk + Şişe',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Row/0.jpg',
-        steps: ['Bir dizinizi ve elinizi koltuğa dayayın.', 'Diğer eldeki ağırlığı kalça cebinize doğru çekin.', 'Sırtınızı sıkıp yavaşça indirin.'],
-        tip: 'Gövdenizi yana doğru döndürmeyin.'
-      },
-      {
-        id: 'sr_16', name: 'Dirsek Üstü Sırt Köprüsü (Rhomboid Bridge)', category: 'sırt', target: 'Romboid ve Üst Sırt', equipment: 'Mat',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Glute_Bridge/0.jpg',
-        steps: ['Sırtüstü yatın, dirseklerinizi yere dik saplayın.', 'Sadece dirseklerinizle yeri iterek sırtınızı ve kürek kemiklerinizi yerden kesin.', '2 saniye kasılı bekleyip geri inin.'],
-        tip: 'Üst sırt kaslarını izole etmenin en doğrudan yoludur.'
-      },
-      {
-        id: 'sr_17', name: 'Çocuk Duruşu Aktif Çekiş (Child Pose Lat Stretch)', category: 'sırt', target: 'Sırt Esnetme ve Kanat Rahatlatma', equipment: 'Mat',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Cat_Cow/0.jpg',
-        steps: ['Topuklar üzerine oturun, kollarınızı ileri uzatın.', 'Ellerinizle sağ çapraza yürüyerek sol kanat kasınızı gerin.', 'Ardından sol çapraza yürüyün.'],
-        tip: 'Her gerilmede derin nefes verin.'
-      },
-      {
-        id: 'sr_18', name: 'Ayakta Ters Kelebek (Bantsız Reverse Fly)', category: 'sırt', target: 'Üst Sırt Postürü', equipment: '2 Su Şişesi',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Bent_Over_Barbell_Row/0.jpg',
-        steps: ['Öne eğilin, sırt düz. Kollar aşağı sarkıtılsın.', 'Dirsekleri çok hafif bükülü tutarak kolları iki yana kanat gibi açın.', 'Kürek kemiklerini birbirine kenetleyin.'],
-        tip: 'Kolları yukarı savurmayın.'
-      },
-      {
-        id: 'sr_19', name: 'Havlu ile Çapraz Çekiş (Diagonal Lat Pull)', category: 'sırt', target: 'Fonksiyonel Sırt Kuvveti', equipment: 'Havlu',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Wide-Grip_Lat_Pulldown/0.jpg',
-        steps: ['Havluyu çapraz tutarak baş üzerine kaldırın.', 'Bir kolu aşağı çekerken diğeriyle yukarıda direnç uygulayın.', 'Sırt kasının gerildiğini hissedin.'],
-        tip: 'İki el arasında sürekli gerilim yaratın.'
-      },
-      {
-        id: 'sr_20', name: 'Yüzüstü Baş Arkası Kenetleme', category: 'sırt', target: 'Skapular Retraksiyon', equipment: 'Mat',
-        gif: 'https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Superman/0.jpg',
-        steps: ['Yüzüstü uzanın, ellerinizi ensenizde birleştirin.', 'Dirseklerinizi tavana doğru olabildiğince yukarı kaldırın.', 'Üst sırtı sıkıp 2 saniye bekleyin.'],
-        tip: 'Dirsekleri yere bırakmadan 12 tekrar yapın.'
-      }
+      { id: 'sr_01', name: 'Superman Tutuşu', category: 'sırt', target: 'Sırt & Bel Postürü', equipment: 'Mat', animType: 'superman', steps: ['Yüzüstü yatıp kolları uzat.', 'Göğsü ve bacakları kaldır.', '2 saniye sıkıp in.'], tip: 'Boynu aşırı geriye bükmeyin.' },
+      { id: 'sr_02', name: 'Kapı Pervazı Çekişi', category: 'sırt', target: 'Kanat Kasları', equipment: 'Kapı Pervazı', animType: 'row', steps: ['Pervazı tutup arkaya eğil.', 'Göğsü kapıya çekerken kürek kemiklerini sık.', 'Geriye sal.'], tip: 'Sırttan güç alın.' },
+      { id: 'sr_03', name: 'Y-T-W Açışları', category: 'sırt', target: 'Üst Sırt & Duruş', equipment: 'Mat', animType: 'superman', steps: ['Yüzüstü Y, T ve W harfleri yap.', 'Kürek kemiklerini tavana sık.', 'Ritmik tekrarla.'], tip: 'Masa başı kamburluğuna birebirdir.' },
+      { id: 'sr_04', name: 'Havlu ile Lat Pulldown', category: 'sırt', target: 'Geniş Sırt (Kanatlar)', equipment: 'Havlu', animType: 'row', steps: ['Havluyu iki yana asılarak ger.', 'Gerginliği bozmadan enseye çek.', 'Sırtı sık.'], tip: 'Havlu asla gevşemesin.' },
+      { id: 'sr_05', name: 'Bird-Dog (Çapraz Kol-Bacak)', category: 'sırt', target: 'Sırt Sabitleyicileri', equipment: 'Mat', animType: 'quadruped', steps: ['Sağ kolu ve sol bacağı uzat.', '2 saniye düz kal.', 'Taraf değiştir.'], tip: 'Beli aşağı sarkıtma.' },
+      { id: 'sr_06', name: 'Yüzüstü Kar Meleği', category: 'sırt', target: 'Orta & Alt Sırt', equipment: 'Mat', animType: 'superman', steps: ['Göğsü hafif kaldır.', 'Kollarla daire çiz.', 'Elleri yere değdirme.'], tip: 'Kürek kemiklerini gergin tut.' },
+      { id: 'sr_07', name: 'Bent Over Row (Sap/Şişe)', category: 'sırt', target: 'Orta Sırt & Trapez', equipment: 'Süpürge Sapı / Şişe', animType: 'row', steps: ['45 derece öne eğil, sırt düz.', 'Ağırlığı göbeğe çek.', 'Dirsekleri geriye at.'], tip: 'Omurgayı düz tut.' },
+      { id: 'sr_08', name: 'Kobra Duruşu', category: 'sırt', target: 'Alt Sırt Kuvveti', equipment: 'Mat', animType: 'superman', steps: ['Yüzüstü yat.', 'Sırt kaslarıyla göğsü kaldır.', 'Nefes verip in.'], tip: 'Kollardan değil sırttan güç al.' },
+      { id: 'sr_09', name: 'Yüzüstü Yüzme (Swimmers)', category: 'sırt', target: 'Arka Zincir', equipment: 'Mat', animType: 'superman', steps: ['Çapraz kol-bacak seri çırp.', 'Suda yüzüyor gibi ritim tut.', 'Kafayı omurgaya hizala.'], tip: 'Dizleri kırma.' },
+      { id: 'sr_10', name: 'Masa Altı Çekiş (Inverted)', category: 'sırt', target: 'Sırt Kalınlığı', equipment: 'Sağlam Masa', animType: 'row', steps: ['Masa altına girip kenarı tut.', 'Gövdeyi masaya çek.', 'Yavaşça in.'], tip: 'Masanın sağlamlığından emin ol.' },
+      { id: 'sr_11', name: 'Duvarda Melekler (Wall Angels)', category: 'sırt', target: 'Duruş Düzeltme', equipment: 'Duvar', animType: 'curl', steps: ['Kolları ve sırtı duvara daya.', 'Teması kesmeden yukarı kaydır.', 'Kürek kemiklerini sık.'], tip: 'Beli duvardan ayırma.' },
+      { id: 'sr_12', name: 'Skapula Şınavı', category: 'sırt', target: 'Kürek Kemiği Çevresi', equipment: 'Mat', animType: 'row', steps: ['Plankta dur, dirsek bükme.', 'Sadece kürek kemiklerini yaklaştırıp uzaklaştır.', '5 cm hareket et.'], tip: 'Omuz sağlığını korur.' },
+      { id: 'sr_13', name: 'Yüzüstü T Açış', category: 'sırt', target: 'Arka Omuz & Sırt', equipment: 'Mat', animType: 'superman', steps: ['Kolları T şeklinde aç.', 'Başparmaklar yukarı kaldır.', 'Sıkıştır.'], tip: 'Sıkıştırmaya odaklan.' },
+      { id: 'sr_14', name: 'Kedi-Deve (Cat-Cow)', category: 'sırt', target: 'Omurga Hareketliliği', equipment: 'Mat', animType: 'quadruped', steps: ['Nefesle sırtı kamburlaştır.', 'Nefes alırken beli çukurlaştır.', 'Omurgayı rahatlat.'], tip: 'Sırt ağrısını alır.' },
+      { id: 'sr_15', name: 'Tek Kol Şişe Row', category: 'sırt', target: 'Kanat İzolasyonu', equipment: 'Koltuk + Şişe', animType: 'row', steps: ['Bir dizi koltuğa koy.', 'Şişeyi cebe doğru çek.', 'Yavaşça bırak.'], tip: 'Gövdeyi döndürme.' },
+      { id: 'sr_16', name: 'Dirsek Üstü Sırt Köprüsü', category: 'sırt', target: 'Romboid & Üst Sırt', equipment: 'Mat', animType: 'bridge', steps: ['Yatıp dirsekleri yere sapla.', 'Dirsekle yeri itip sırtı kaldır.', '2 saniye kasılı kal.'], tip: 'Üst sırtı doğrudan uyarır.' },
+      { id: 'sr_17', name: 'Çocuk Duruşu Çekiş', category: 'sırt', target: 'Kanat Esnetme', equipment: 'Mat', animType: 'superman', steps: ['Topuklara oturup uzan.', 'Sağ ve sol çapraza yürüyüp sırtı ger.', 'Derin nefes al.'], tip: 'Kanatları rahatlat.' },
+      { id: 'sr_18', name: 'Ayakta Ters Kelebek', category: 'sırt', target: 'Üst Sırt Postürü', equipment: '2 Şişe', animType: 'row', steps: ['Öne eğil, kollar aşağıda.', 'İki yana kanat gibi aç.', 'Kürek kemiklerini kenetle.'], tip: 'Kolları savurma.' },
+      { id: 'sr_19', name: 'Havlu Çapraz Çekiş', category: 'sırt', target: 'Sırt Kuvveti', equipment: 'Havlu', animType: 'row', steps: ['Havluyu çapraz ger.', 'Bir kolla çekerken diğeriyle diren.', 'Kanadı hisset.'], tip: 'Gerilimi hiç kesme.' },
+      { id: 'sr_20', name: 'Baş Arkası Dirsek Kaldırma', category: 'sırt', target: 'Skapular Kuvvet', equipment: 'Mat', animType: 'superman', steps: ['Eller ensede yüzüstü yat.', 'Dirsekleri tavana doğru kaldır.', '2 saniye sık.'], tip: 'Dirsekleri yere bırakma.' }
     ];
 
     const DAYS = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
 
-    // LocalStorage
-    let routines = JSON.parse(localStorage.getItem('homefit_routines_v3')) || {
+    let routines = JSON.parse(localStorage.getItem('homefit_routines_v4')) || {
       'all': ['kl_01', 'kl_03', 'bc_01', 'kl_b01', 'sr_01'],
       '1': [], '2': [], '3': [], '4': [], '5': [], '6': [], '0': []
     };
@@ -644,7 +324,7 @@
     let currentBuilderFilter = 'all';
 
     function saveRoutines() {
-      localStorage.setItem('homefit_routines_v3', JSON.stringify(routines));
+      localStorage.setItem('homefit_routines_v4', JSON.stringify(routines));
     }
 
     // TEMA
@@ -714,7 +394,9 @@
         const card = document.createElement('div');
         card.className = 'bg-white dark:bg-slate-800 rounded-2xl p-4 border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row gap-4 items-center shadow-sm';
         card.innerHTML = `
-          <img src="${ex.gif}" alt="${ex.name}" class="w-full sm:w-28 h-28 rounded-xl object-cover bg-slate-200 dark:bg-slate-700 shrink-0" onerror="this.src='https://placehold.co/120x120/1e293b/ffffff?text=${encodeURIComponent(ex.name)}'" />
+          <div class="w-full sm:w-28 shrink-0">
+            ${getExerciseAnimationSvg(ex.animType, false)}
+          </div>
           <div class="flex-1 text-center sm:text-left">
             <span class="text-[11px] uppercase font-bold text-brand tracking-wider">${ex.category} • ${ex.equipment}</span>
             <h3 class="font-bold text-base mt-0.5">${ex.name}</h3>
@@ -742,9 +424,9 @@
     function filterBuilderCategory(cat) {
       currentBuilderFilter = cat;
       document.querySelectorAll('.b-cat-btn').forEach(b => {
-        b.className = 'b-cat-btn px-2 py-0.5 rounded text-xs bg-slate-200 dark:bg-slate-800';
+        b.className = 'b-cat-btn px-2.5 py-0.5 rounded text-xs bg-slate-200 dark:bg-slate-800';
       });
-      event.target.className = 'b-cat-btn px-2 py-0.5 rounded text-xs bg-brand text-white font-medium';
+      event.target.className = 'b-cat-btn px-2.5 py-0.5 rounded text-xs bg-brand text-white font-medium';
       renderBuilder();
     }
 
@@ -762,7 +444,7 @@
         card.className = 'p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/60 flex items-center justify-between gap-2';
         card.innerHTML = `
           <div class="flex items-center gap-2.5">
-            <img src="${ex.gif}" class="w-11 h-11 rounded-lg object-cover bg-slate-100 dark:bg-slate-700 shrink-0" onerror="this.src='https://placehold.co/60x60/1e293b/ffffff?text=Fit'" />
+            ${getExerciseAnimationSvg(ex.animType, true)}
             <div>
               <p class="text-[10px] text-brand font-semibold uppercase">${ex.category}</p>
               <h4 class="text-xs sm:text-sm font-bold leading-snug line-clamp-1">${ex.name}</h4>
@@ -829,8 +511,8 @@
         const stepsHtml = ex.steps.map((s, idx) => `<li class="text-xs text-slate-500 dark:text-slate-400 mb-1"><strong class="text-slate-700 dark:text-slate-200">${idx+1}.</strong> ${s}</li>`).join('');
 
         card.innerHTML = `
-          <div class="relative bg-slate-950 flex items-center justify-center min-h-[200px]">
-            <img src="${ex.gif}" alt="${ex.name}" class="h-52 w-full object-cover" loading="lazy" onerror="this.src='https://placehold.co/400x250/1e293b/ffffff?text=${encodeURIComponent(ex.name)}'" />
+          <div class="relative bg-slate-950 flex items-center justify-center p-4">
+            ${getExerciseAnimationSvg(ex.animType, false)}
             <span class="absolute top-3 left-3 bg-brand text-white text-[10px] font-bold uppercase px-2 py-0.5 rounded-md shadow">${ex.category}</span>
           </div>
           <div class="p-4 sm:p-5 flex-1 flex flex-col justify-between space-y-3">
@@ -840,7 +522,7 @@
               <p class="text-xs text-slate-400 font-medium mt-0.5"><i class="fa-solid fa-house mr-1 text-brand"></i>${ex.equipment}</p>
               
               <div class="mt-3 pt-3 border-t border-slate-100 dark:border-slate-700">
-                <span class="text-xs font-semibold block mb-1.5">Nasıl Yapılır? (Form Şablonu)</span>
+                <span class="text-xs font-semibold block mb-1.5">Nasıl Yapılır? (Form Rehberi)</span>
                 <ul class="list-none pl-0">
                   ${stepsHtml}
                 </ul>
